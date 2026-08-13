@@ -6,7 +6,7 @@ const FeaturedSection = () => {
 
       <div>
 
-      </div
+      </div>
 
     </div>
   )
