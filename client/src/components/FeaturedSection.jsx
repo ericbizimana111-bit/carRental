@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from './Title'
-import { dummyCarData } from '../assets/assets'
+import { assets, dummyCarData } from '../assets/assets'
 import CarCard from './CarCard';
 import { useNavigate } from 'react-router-dom'
 
@@ -29,7 +29,7 @@ const FeaturedSection = () => {
 
       <button onClick={() => {
         navigate('/cars');
-        scrollTo(0, 0) 
+        scrollTo(0, 0)
       }}
 
         className='flex items-center justify-center gap-2 px-6 py-2 border

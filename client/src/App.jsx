@@ -1,26 +1,31 @@
 import React, { useState } from 'react'
 import Navbar from './components/Navbar'
-import { useLocation } from 'react-router-dom'
-
+import { Route, Routes, useLocation } from 'react-router-dom'
+import Home from './pages/Home'
+import Cars from './pages/Cars'
+import CarDetails from './pages/CarDetails'
+import MyBookings from './pages/MyBookings'
 
 const App = () => {
-  
-  
   const [showLogin, setShowLogin] = useState(false)
-  const isOwnerPath = useLocation().pathname.startsWith('/owner') //returns true or false //true if user is on owner page 
+  const location = useLocation()
+  const isOwnerPath = location.pathname.startsWith('/owner')
+
   return (
     <>
-      {/* curl braces allows to enter javascript mode inside jsx  */}
-      {/*this is like saying if am not on an owner page,show navbar  */}
-      
-      {!isOwnerPath && <Navbar setShowLogin={setShowLogin} /> }
+      {!isOwnerPath && <Navbar setShowLogin={setShowLogin} />}
 
-
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cars" element={<Cars />} />
+        <Route path="/car-details/:id" element={<CarDetails />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
+      </Routes>
     </>
   )
 }
 
-export default App;
+export default App
 
 /*
 | Command                 | Purpose                    |
