@@ -8,7 +8,7 @@ const Testimonial = () => {
         {
             name: "Biz.Eric",
             location: "New York, USA",
-            image: assets.testimonial_image_2,
+            image: assets.user_profile,
             testimonial: "CarRental made my trip so much easier.The car was delivered right to my door,and the customer service was fantastic!"
         },
         {
@@ -22,8 +22,8 @@ const Testimonial = () => {
         {
             name: "Muk.Esperance",
             location: "Sydney, Australia",
-            image: assets.testimonial_image_1,
-            testimonial: " i higly recommend CarRental! Their fleet is amazing, and I always feel like i'm getting the best deal with excellent service"
+            image: assets.testimonial_image_2,
+            testimonial: "I higly recommend CarRental! Their fleet is amazing, and I always feel like i'm getting the best deal with excellent service"
 
         }
     ]
