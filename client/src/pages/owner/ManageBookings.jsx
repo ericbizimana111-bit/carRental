@@ -49,6 +49,7 @@ const ManageBookings = () => {
                 {bookings.map(booking => (
                     <div
                         key={booking._id}
+                        data-testid="booking-row"
                         className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_80px] gap-3 md:gap-0 items-center px-4 py-3 border-b last:border-0"
                     >
                         <div className="flex items-center gap-3">

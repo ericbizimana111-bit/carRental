@@ -100,10 +100,16 @@ test.describe('booking UX regression', () => {
 
     test('owner sees and updates the car booking status', async ({ page }) => {
         await loginThroughUi(page, ownerEmail, ownerPassword)
+        const ownerBookingsResponse = page.waitForResponse('**/api/bookings/owner')
         await page.goto('/owner/manage-bookings')
-        await expect(page.getByText(testCarName)).toBeVisible()
-        await expect(page.getByText('E2E Booking User')).toBeVisible()
-        const bookingRow = page.locator('div').filter({ hasText: testCarName }).filter({ hasText: 'E2E Booking User' }).last()
+        const ownerBookings = await ownerBookingsResponse
+        expect(ownerBookings.status()).toBe(200)
+        console.log(`OWNER_BOOKINGS_RESPONSE ${JSON.stringify((await ownerBookings.json()).data.map(booking => booking.car?.brand))}`)
+        await page.waitForTimeout(1000)
+        console.log(`OWNER_PAGE_TEXT ${await page.locator('body').innerText()}`)
+        const bookingRow = page.getByTestId('booking-row').filter({ hasText: testCarName })
+        await expect(bookingRow).toBeVisible()
+        await expect(bookingRow).toContainText('E2E Booking User')
         await bookingRow.getByRole('button', { name: 'Confirm' }).click()
         await expect(page.getByText('Confirmed')).toBeVisible()
     })

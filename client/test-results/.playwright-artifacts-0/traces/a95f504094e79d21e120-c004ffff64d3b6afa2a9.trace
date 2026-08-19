@@ -1,0 +1,98 @@
+{"version":8,"type":"context-options","origin":"library","browserName":"","playwrightVersion":"1.62.1","options":{},"platform":"win32","wallTime":1787147511975,"monotonicTime":1861.145,"sdkLanguage":"javascript","contextId":"request-context@5fc293a7d04e75e9f1506c3d05a154a1","title":"booking-ux.spec.js:101 › booking UX regression › owner sees and updates the car booking status"}
+{"type":"before","callId":"call@5","startTime":1868.21,"class":"APIRequestContext","method":"fetch","params":{"url":"http://localhost:5000/api/auth/login","method":"POST","jsonData":"{\"email\":\"owner@local.test\",\"password\":\"AuditPass123!\"}"},"stepId":"pw:api@32"}
+{"type":"log","callId":"call@5","time":1882.42,"message":"→ POST http://localhost:5000/api/auth/login"}
+{"type":"log","callId":"call@5","time":1882.526,"message":"  user-agent: Playwright/1.62.1 (x64; windows 10.0) node/22.20"}
+{"type":"log","callId":"call@5","time":1882.564,"message":"  accept: */*"}
+{"type":"log","callId":"call@5","time":1882.595,"message":"  accept-encoding: gzip,deflate,br"}
+{"type":"log","callId":"call@5","time":1882.63,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@5","time":1882.682,"message":"  content-length: 55"}
+{"type":"log","callId":"call@5","time":2226.389,"message":"← 200 OK"}
+{"type":"log","callId":"call@5","time":2226.479,"message":"  vary: Origin"}
+{"type":"log","callId":"call@5","time":2226.498,"message":"  access-control-allow-credentials: true"}
+{"type":"log","callId":"call@5","time":2226.515,"message":"  content-security-policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"}
+{"type":"log","callId":"call@5","time":2226.527,"message":"  cross-origin-opener-policy: same-origin"}
+{"type":"log","callId":"call@5","time":2226.534,"message":"  cross-origin-resource-policy: same-origin"}
+{"type":"log","callId":"call@5","time":2226.55,"message":"  origin-agent-cluster: ?1"}
+{"type":"log","callId":"call@5","time":2226.557,"message":"  referrer-policy: no-referrer"}
+{"type":"log","callId":"call@5","time":2226.563,"message":"  strict-transport-security: max-age=31536000; includeSubDomains"}
+{"type":"log","callId":"call@5","time":2226.568,"message":"  x-content-type-options: nosniff"}
+{"type":"log","callId":"call@5","time":2226.574,"message":"  x-dns-prefetch-control: off"}
+{"type":"log","callId":"call@5","time":2226.58,"message":"  x-download-options: noopen"}
+{"type":"log","callId":"call@5","time":2226.585,"message":"  x-frame-options: SAMEORIGIN"}
+{"type":"log","callId":"call@5","time":2226.591,"message":"  x-permitted-cross-domain-policies: none"}
+{"type":"log","callId":"call@5","time":2226.597,"message":"  x-xss-protection: 0"}
+{"type":"log","callId":"call@5","time":2226.603,"message":"  ratelimit-policy: 300;w=900"}
+{"type":"log","callId":"call@5","time":2226.609,"message":"  ratelimit: limit=300, remaining=67, reset=52"}
+{"type":"log","callId":"call@5","time":2226.615,"message":"  set-cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YTQ0YjBjNjk2MmUwNzJiODBmZTgiLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.QAoaxaNpuhKqDJQVMFFNrkayLk0uiougIVpJJj7Qw9o; Max-Age=604800; Path=/; Expires=Wed, 26 Aug 2026 13:51:52 GMT; HttpOnly; SameSite=Lax"}
+{"type":"log","callId":"call@5","time":2226.621,"message":"  content-type: application/json; charset=utf-8"}
+{"type":"log","callId":"call@5","time":2226.627,"message":"  content-length: 166"}
+{"type":"log","callId":"call@5","time":2226.633,"message":"  etag: W/\"a6-Eq4O2wAsi2y3RUzgfGnahFYWAtM\""}
+{"type":"log","callId":"call@5","time":2226.639,"message":"  date: Wed, 19 Aug 2026 13:51:52 GMT"}
+{"type":"log","callId":"call@5","time":2226.645,"message":"  connection: keep-alive"}
+{"type":"log","callId":"call@5","time":2226.651,"message":"  keep-alive: timeout=5"}
+{"type":"after","callId":"call@5","endTime":2230.515,"result":{"response":{"url":"http://localhost:5000/api/auth/login","status":200,"statusText":"OK","headers":[{"name":"Vary","value":"Origin"},{"name":"Access-Control-Allow-Credentials","value":"true"},{"name":"Content-Security-Policy","value":"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"},{"name":"Cross-Origin-Opener-Policy","value":"same-origin"},{"name":"Cross-Origin-Resource-Policy","value":"same-origin"},{"name":"Origin-Agent-Cluster","value":"?1"},{"name":"Referrer-Policy","value":"no-referrer"},{"name":"Strict-Transport-Security","value":"max-age=31536000; includeSubDomains"},{"name":"X-Content-Type-Options","value":"nosniff"},{"name":"X-DNS-Prefetch-Control","value":"off"},{"name":"X-Download-Options","value":"noopen"},{"name":"X-Frame-Options","value":"SAMEORIGIN"},{"name":"X-Permitted-Cross-Domain-Policies","value":"none"},{"name":"X-XSS-Protection","value":"0"},{"name":"RateLimit-Policy","value":"300;w=900"},{"name":"RateLimit","value":"limit=300, remaining=67, reset=52"},{"name":"Set-Cookie","value":"token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YTQ0YjBjNjk2MmUwNzJiODBmZTgiLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.QAoaxaNpuhKqDJQVMFFNrkayLk0uiougIVpJJj7Qw9o; Max-Age=604800; Path=/; Expires=Wed, 26 Aug 2026 13:51:52 GMT; HttpOnly; SameSite=Lax"},{"name":"Content-Type","value":"application/json; charset=utf-8"},{"name":"Content-Length","value":"166"},{"name":"ETag","value":"W/\"a6-Eq4O2wAsi2y3RUzgfGnahFYWAtM\""},{"name":"Date","value":"Wed, 19 Aug 2026 13:51:52 GMT"},{"name":"Connection","value":"keep-alive"},{"name":"Keep-Alive","value":"timeout=5"}],"serverAddr":{"ipAddress":"::1","port":5000},"timing":{"startTime":1787147511985,"domainLookupStart":0,"domainLookupEnd":13.048999999999978,"connectStart":13.048999999999978,"secureConnectionStart":-1,"connectEnd":15.507000000000062,"requestStart":15.507000000000062,"responseStart":353.35000000000014},"responseEndTiming":355.76300000000015,"fetchUid":"7f0db78ddd7db04e8e78c8c51e384448"}}}
+{"type":"before","callId":"call@7","startTime":2236.835,"class":"APIRequestContext","method":"fetch","params":{"url":"http://localhost:5000/api/cars","method":"POST","jsonData":"{\"brand\":\"E2E Test Car 1787147511878\",\"model\":\"Regression\",\"image\":\"https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80\",\"year\":2025,\"category\":\"Sedan\",\"seating_capacity\":5,\"fuel_type\":\"Gasoline\",\"transmission\":\"Automatic\",\"pricePerDay\":175,\"location\":\"Chicago\",\"description\":\"Dedicated browser regression vehicle.\",\"isAvailable\":true}"},"stepId":"pw:api@34"}
+{"type":"log","callId":"call@7","time":2237.883,"message":"→ POST http://localhost:5000/api/cars"}
+{"type":"log","callId":"call@7","time":2237.9,"message":"  user-agent: Playwright/1.62.1 (x64; windows 10.0) node/22.20"}
+{"type":"log","callId":"call@7","time":2237.906,"message":"  accept: */*"}
+{"type":"log","callId":"call@7","time":2237.911,"message":"  accept-encoding: gzip,deflate,br"}
+{"type":"log","callId":"call@7","time":2237.916,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@7","time":2237.921,"message":"  content-length: 374"}
+{"type":"log","callId":"call@7","time":2237.926,"message":"  cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YTQ0YjBjNjk2MmUwNzJiODBmZTgiLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.QAoaxaNpuhKqDJQVMFFNrkayLk0uiougIVpJJj7Qw9o"}
+{"type":"log","callId":"call@7","time":2250.929,"message":"← 201 Created"}
+{"type":"log","callId":"call@7","time":2250.946,"message":"  vary: Origin"}
+{"type":"log","callId":"call@7","time":2250.953,"message":"  access-control-allow-credentials: true"}
+{"type":"log","callId":"call@7","time":2250.958,"message":"  content-security-policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"}
+{"type":"log","callId":"call@7","time":2250.965,"message":"  cross-origin-opener-policy: same-origin"}
+{"type":"log","callId":"call@7","time":2250.971,"message":"  cross-origin-resource-policy: same-origin"}
+{"type":"log","callId":"call@7","time":2250.976,"message":"  origin-agent-cluster: ?1"}
+{"type":"log","callId":"call@7","time":2250.989,"message":"  referrer-policy: no-referrer"}
+{"type":"log","callId":"call@7","time":2250.994,"message":"  strict-transport-security: max-age=31536000; includeSubDomains"}
+{"type":"log","callId":"call@7","time":2251,"message":"  x-content-type-options: nosniff"}
+{"type":"log","callId":"call@7","time":2251.006,"message":"  x-dns-prefetch-control: off"}
+{"type":"log","callId":"call@7","time":2251.011,"message":"  x-download-options: noopen"}
+{"type":"log","callId":"call@7","time":2251.017,"message":"  x-frame-options: SAMEORIGIN"}
+{"type":"log","callId":"call@7","time":2251.022,"message":"  x-permitted-cross-domain-policies: none"}
+{"type":"log","callId":"call@7","time":2251.028,"message":"  x-xss-protection: 0"}
+{"type":"log","callId":"call@7","time":2251.034,"message":"  ratelimit-policy: 300;w=900"}
+{"type":"log","callId":"call@7","time":2251.039,"message":"  ratelimit: limit=300, remaining=66, reset=52"}
+{"type":"log","callId":"call@7","time":2251.045,"message":"  content-type: application/json; charset=utf-8"}
+{"type":"log","callId":"call@7","time":2251.051,"message":"  content-length: 625"}
+{"type":"log","callId":"call@7","time":2251.057,"message":"  etag: W/\"271-IL7DNOj6yIFPoK/phWZt5JfLdlg\""}
+{"type":"log","callId":"call@7","time":2251.063,"message":"  date: Wed, 19 Aug 2026 13:51:52 GMT"}
+{"type":"log","callId":"call@7","time":2251.069,"message":"  connection: keep-alive"}
+{"type":"log","callId":"call@7","time":2251.074,"message":"  keep-alive: timeout=5"}
+{"type":"after","callId":"call@7","endTime":2251.211,"result":{"response":{"url":"http://localhost:5000/api/cars","status":201,"statusText":"Created","headers":[{"name":"Vary","value":"Origin"},{"name":"Access-Control-Allow-Credentials","value":"true"},{"name":"Content-Security-Policy","value":"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"},{"name":"Cross-Origin-Opener-Policy","value":"same-origin"},{"name":"Cross-Origin-Resource-Policy","value":"same-origin"},{"name":"Origin-Agent-Cluster","value":"?1"},{"name":"Referrer-Policy","value":"no-referrer"},{"name":"Strict-Transport-Security","value":"max-age=31536000; includeSubDomains"},{"name":"X-Content-Type-Options","value":"nosniff"},{"name":"X-DNS-Prefetch-Control","value":"off"},{"name":"X-Download-Options","value":"noopen"},{"name":"X-Frame-Options","value":"SAMEORIGIN"},{"name":"X-Permitted-Cross-Domain-Policies","value":"none"},{"name":"X-XSS-Protection","value":"0"},{"name":"RateLimit-Policy","value":"300;w=900"},{"name":"RateLimit","value":"limit=300, remaining=66, reset=52"},{"name":"Content-Type","value":"application/json; charset=utf-8"},{"name":"Content-Length","value":"625"},{"name":"ETag","value":"W/\"271-IL7DNOj6yIFPoK/phWZt5JfLdlg\""},{"name":"Date","value":"Wed, 19 Aug 2026 13:51:52 GMT"},{"name":"Connection","value":"keep-alive"},{"name":"Keep-Alive","value":"timeout=5"}],"serverAddr":{"ipAddress":"::1","port":5000},"timing":{"startTime":1787147512351,"domainLookupStart":-1,"domainLookupEnd":-1,"connectStart":-1,"secureConnectionStart":-1,"connectEnd":-1,"requestStart":0.5899999999996908,"responseStart":12.518999999999778},"responseEndTiming":12.993999999999687,"fetchUid":"df1b384ea093d633983c2cf747126cfd"}}}
+{"type":"before","callId":"call@10","startTime":2257.254,"class":"APIRequestContext","method":"fetch","params":{"url":"http://localhost:5000/api/auth/register","method":"POST","jsonData":"{\"name\":\"E2E Booking User\",\"email\":\"e2e-booking-1787147511878@test.local\",\"password\":\"BrowserTestPass123!\"}"},"stepId":"pw:api@36"}
+{"type":"log","callId":"call@10","time":2257.836,"message":"→ POST http://localhost:5000/api/auth/register"}
+{"type":"log","callId":"call@10","time":2257.85,"message":"  user-agent: Playwright/1.62.1 (x64; windows 10.0) node/22.20"}
+{"type":"log","callId":"call@10","time":2257.857,"message":"  accept: */*"}
+{"type":"log","callId":"call@10","time":2257.862,"message":"  accept-encoding: gzip,deflate,br"}
+{"type":"log","callId":"call@10","time":2257.866,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@10","time":2257.871,"message":"  content-length: 107"}
+{"type":"log","callId":"call@10","time":2257.876,"message":"  cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YTQ0YjBjNjk2MmUwNzJiODBmZTgiLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.QAoaxaNpuhKqDJQVMFFNrkayLk0uiougIVpJJj7Qw9o"}
+{"type":"log","callId":"call@10","time":2636.026,"message":"← 201 Created"}
+{"type":"log","callId":"call@10","time":2636.048,"message":"  vary: Origin"}
+{"type":"log","callId":"call@10","time":2636.055,"message":"  access-control-allow-credentials: true"}
+{"type":"log","callId":"call@10","time":2636.061,"message":"  content-security-policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"}
+{"type":"log","callId":"call@10","time":2636.067,"message":"  cross-origin-opener-policy: same-origin"}
+{"type":"log","callId":"call@10","time":2636.072,"message":"  cross-origin-resource-policy: same-origin"}
+{"type":"log","callId":"call@10","time":2636.077,"message":"  origin-agent-cluster: ?1"}
+{"type":"log","callId":"call@10","time":2636.082,"message":"  referrer-policy: no-referrer"}
+{"type":"log","callId":"call@10","time":2636.087,"message":"  strict-transport-security: max-age=31536000; includeSubDomains"}
+{"type":"log","callId":"call@10","time":2636.092,"message":"  x-content-type-options: nosniff"}
+{"type":"log","callId":"call@10","time":2636.1,"message":"  x-dns-prefetch-control: off"}
+{"type":"log","callId":"call@10","time":2636.105,"message":"  x-download-options: noopen"}
+{"type":"log","callId":"call@10","time":2636.111,"message":"  x-frame-options: SAMEORIGIN"}
+{"type":"log","callId":"call@10","time":2636.116,"message":"  x-permitted-cross-domain-policies: none"}
+{"type":"log","callId":"call@10","time":2636.121,"message":"  x-xss-protection: 0"}
+{"type":"log","callId":"call@10","time":2636.126,"message":"  ratelimit-policy: 300;w=900"}
+{"type":"log","callId":"call@10","time":2636.132,"message":"  ratelimit: limit=300, remaining=65, reset=52"}
+{"type":"log","callId":"call@10","time":2636.137,"message":"  set-cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YjRmOGQ3NzA4NjI3YWQ3ZWVmZDciLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.7Yz4Z_J28BoBX2FZEjYBiOYm02G4RDSeZPRNlnR_x3A; Max-Age=604800; Path=/; Expires=Wed, 26 Aug 2026 13:51:52 GMT; HttpOnly; SameSite=Lax"}
+{"type":"log","callId":"call@10","time":2636.142,"message":"  content-type: application/json; charset=utf-8"}
+{"type":"log","callId":"call@10","time":2636.147,"message":"  content-length: 196"}
+{"type":"log","callId":"call@10","time":2636.153,"message":"  etag: W/\"c4-UVQdcbU2jD6YN4wsEjTiKjj/ZMk\""}
+{"type":"log","callId":"call@10","time":2636.158,"message":"  date: Wed, 19 Aug 2026 13:51:52 GMT"}
+{"type":"log","callId":"call@10","time":2636.163,"message":"  connection: keep-alive"}
+{"type":"log","callId":"call@10","time":2636.169,"message":"  keep-alive: timeout=5"}
+{"type":"after","callId":"call@10","endTime":2636.839,"result":{"response":{"url":"http://localhost:5000/api/auth/register","status":201,"statusText":"Created","headers":[{"name":"Vary","value":"Origin"},{"name":"Access-Control-Allow-Credentials","value":"true"},{"name":"Content-Security-Policy","value":"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"},{"name":"Cross-Origin-Opener-Policy","value":"same-origin"},{"name":"Cross-Origin-Resource-Policy","value":"same-origin"},{"name":"Origin-Agent-Cluster","value":"?1"},{"name":"Referrer-Policy","value":"no-referrer"},{"name":"Strict-Transport-Security","value":"max-age=31536000; includeSubDomains"},{"name":"X-Content-Type-Options","value":"nosniff"},{"name":"X-DNS-Prefetch-Control","value":"off"},{"name":"X-Download-Options","value":"noopen"},{"name":"X-Frame-Options","value":"SAMEORIGIN"},{"name":"X-Permitted-Cross-Domain-Policies","value":"none"},{"name":"X-XSS-Protection","value":"0"},{"name":"RateLimit-Policy","value":"300;w=900"},{"name":"RateLimit","value":"limit=300, remaining=65, reset=52"},{"name":"Set-Cookie","value":"token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2YTg1YjRmOGQ3NzA4NjI3YWQ3ZWVmZDciLCJpYXQiOjE3ODcxNDc1MTIsImV4cCI6MTc4Nzc1MjMxMn0.7Yz4Z_J28BoBX2FZEjYBiOYm02G4RDSeZPRNlnR_x3A; Max-Age=604800; Path=/; Expires=Wed, 26 Aug 2026 13:51:52 GMT; HttpOnly; SameSite=Lax"},{"name":"Content-Type","value":"application/json; charset=utf-8"},{"name":"Content-Length","value":"196"},{"name":"ETag","value":"W/\"c4-UVQdcbU2jD6YN4wsEjTiKjj/ZMk\""},{"name":"Date","value":"Wed, 19 Aug 2026 13:51:52 GMT"},{"name":"Connection","value":"keep-alive"},{"name":"Keep-Alive","value":"timeout=5"}],"serverAddr":{"ipAddress":"::1","port":5000},"timing":{"startTime":1787147512371,"domainLookupStart":-1,"domainLookupEnd":-1,"connectStart":-1,"secureConnectionStart":-1,"connectEnd":-1,"requestStart":0.3229999999998654,"responseStart":377.78999999999996},"responseEndTiming":378.692,"fetchUid":"2c631653f062dd92998388809cfc4984"}}}
