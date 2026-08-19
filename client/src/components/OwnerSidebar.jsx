@@ -1,20 +1,22 @@
 import React from 'react'
-import { assets, dummyUserData, ownerMenuLinks } from '../assets/assets'
+import { ownerMenuLinks } from '../assets/assets'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const OwnerSidebar = () => {
     const location = useLocation()
+    const { user } = useAuth()
 
     return (
         <aside className="w-52 shrink-0 border-r border-gray-200 min-h-[calc(100vh-65px)]">
             <div className="flex flex-col items-center py-6 border-b border-gray-100">
                 <img
-                    src={dummyUserData.image}
+                    src={user?.image || ''}
                     className="w-11 h-11 rounded-full object-cover"
                     alt=""
                 />
                 <p className="text-xs font-medium mt-2">
-                    Richard Sanford
+                    {user?.name || 'Owner'}
                 </p>
             </div>
 

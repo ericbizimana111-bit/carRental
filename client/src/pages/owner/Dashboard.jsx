@@ -1,10 +1,13 @@
-import React from 'react'
-import { assets, dummyDashboardData } from '../../assets/assets'
+import React, { useEffect, useState } from 'react'
+import { assets } from '../../assets/assets'
 import StatusBadge from '../../components/StatusBadge'
+import api from '../../services/api'
 
 const Dashboard = () => {
-    const data = dummyDashboardData
+    const [data, setData] = useState({ totalCars: 0, totalBookings: 0, pendingBookings: 0, completedBookings: 0, recentBookings: [], monthlyRevenue: 0 })
     const currency = import.meta.env.VITE_CURRENCY
+    const [error, setError] = useState('')
+    useEffect(() => { api.get('/bookings/owner/dashboard').then(response => setData(response.data.data)).catch(error => setError(error.response?.data?.message || 'Unable to load dashboard')) }, [])
 
     return (
         <div className="p-6 md:p-8 max-w-6xl">
@@ -16,6 +19,7 @@ const Dashboard = () => {
                 Monitor overall platform performance including total cars, bookings, revenue, and recent activities.
             </p>
 
+            {error && <p className="text-xs text-red-500 mt-4">{error}</p>}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
                 <div className="border rounded-lg p-4">
                     <p className="text-xs text-gray-500">Total Cars</p>

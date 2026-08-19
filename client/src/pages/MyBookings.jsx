@@ -1,9 +1,31 @@
-import React from 'react'
-import { assets, dummyMyBookingsData } from '../assets/assets'
+import React, { useEffect, useState } from 'react'
+import { assets } from '../assets/assets'
 import StatusBadge from '../components/StatusBadge'
+import api from '../services/api'
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
+
+  const loadBookings = async () => {
+    try {
+      const response = await api.get('/bookings/my')
+      setBookings(response.data.data || [])
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Unable to load bookings')
+    } finally { setLoading(false) }
+  }
+
+  useEffect(() => { loadBookings() }, [])
+
+  const cancelBooking = async id => {
+    try {
+      await api.patch(`/bookings/${id}/cancel`)
+      loadBookings()
+    } catch (error) { setMessage(error.response?.data?.message || 'Unable to cancel booking') }
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12">
@@ -16,7 +38,10 @@ const MyBookings = () => {
       </p>
 
       <div className="mt-7 space-y-4">
-        {dummyMyBookingsData.map(booking => (
+        {loading && <p className="text-sm text-gray-500">Loading bookings...</p>}
+        {message && <p className="text-sm text-red-500">{message}</p>}
+        {!loading && !message && bookings.length === 0 && <p className="text-sm text-gray-500">You do not have any bookings yet.</p>}
+        {bookings.map(booking => (
           <div
             key={booking._id}
             className="border border-gray-200 rounded-lg p-4 md:p-5 flex flex-col lg:flex-row gap-5"
@@ -47,7 +72,7 @@ const MyBookings = () => {
 
               <div className="flex items-center gap-2">
                 <img src={assets.location_icon_colored} className="w-3" alt="" />
-                <span>Pickup Location: {booking.car.location}</span>
+                <span>Pickup Location: {booking.pickupLocation}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -69,6 +94,7 @@ const MyBookings = () => {
               <p className="text-lg font-semibold text-blue-600">
                 {currency}{booking.price}
               </p>
+              {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => cancelBooking(booking._id)} className="text-[10px] text-red-500 mt-2">Cancel booking</button>}
             </div>
           </div>
         ))}

@@ -1,8 +1,37 @@
-import React from 'react'
-import { assets, dummyCarData } from '../../assets/assets'
+import React, { useEffect, useState } from 'react'
+import { assets } from '../../assets/assets'
+import api from '../../services/api'
 
 const ManageCars = () => {
     const currency = import.meta.env.VITE_CURRENCY
+    const [cars, setCars] = useState([])
+    const [message, setMessage] = useState('')
+
+    const loadCars = async () => {
+        try {
+            const response = await api.get('/cars/owner/list')
+            setCars(response.data.data || [])
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Unable to load cars')
+        }
+    }
+
+    useEffect(() => { loadCars() }, [])
+
+    const toggleAvailability = async car => {
+        try {
+            await api.put(`/cars/${car._id}`, { ...car, owner: undefined, isAvailable: !car.isAvailable })
+            loadCars()
+        } catch (error) { setMessage(error.response?.data?.message || 'Unable to update car') }
+    }
+
+    const deleteCar = async id => {
+        if (!window.confirm('Delete this car from the platform?')) return
+        try {
+            await api.delete(`/cars/${id}`)
+            loadCars()
+        } catch (error) { setMessage(error.response?.data?.message || 'Unable to delete car') }
+    }
 
     return (
         <div className="p-6 md:p-8 max-w-6xl">
@@ -20,7 +49,8 @@ const ManageCars = () => {
                     <span>Actions</span>
                 </div>
 
-                {dummyCarData.map(car => (
+                {message && <p className="p-4 text-xs text-red-500">{message}</p>}
+                {cars.map(car => (
                     <div
                         key={car._id}
                         className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_80px] gap-3 md:gap-0 items-center px-4 py-3 border-b last:border-0"
@@ -53,10 +83,10 @@ const ManageCars = () => {
                         </span>
 
                         <div className="flex items-center gap-4">
-                            <button className="hover:opacity-60">
+                            <button onClick={() => toggleAvailability(car)} className="hover:opacity-60" title="Toggle availability">
                                 <img src={assets.eye_icon} className="w-4" alt="" />
                             </button>
-                            <button className="hover:opacity-60">
+                            <button onClick={() => deleteCar(car._id)} className="hover:opacity-60" title="Delete car">
                                 <img src={assets.delete_icon} className="w-4" alt="" />
                             </button>
                         </div>

@@ -1,24 +1,36 @@
-import React, { useMemo, useState } from 'react'
-import { assets, dummyCarData } from '../assets/assets'
+import React, { useEffect, useState } from 'react'
+import { assets } from '../assets/assets'
 import CarCard from '../components/CarCard'
+import api from '../services/api'
 
 const Cars = () => {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
+  const [sort, setSort] = useState('newest')
+  const [cars, setCars] = useState([])
+  const [categories, setCategories] = useState(['All'])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const categories = ['All', ...new Set(dummyCarData.map(car => car.category))]
+  useEffect(() => {
+    const loadCars = async () => {
+      setLoading(true)
+      setError('')
+      try {
+        const response = await api.get('/cars', { params: { search, category, sort } })
+        const loadedCars = response.data.data || []
+        setCars(loadedCars)
+        setCategories(['All', ...new Set(loadedCars.map(car => car.category))])
+      } catch (requestError) {
+        setError(requestError.response?.data?.message || 'Unable to load cars right now')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredCars = useMemo(() => {
-    return dummyCarData.filter(car => {
-      const matchesSearch = `${car.brand} ${car.model} ${car.category} ${car.location}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-
-      const matchesCategory = category === 'All' || car.category === category
-
-      return matchesSearch && matchesCategory
-    })
-  }, [search, category])
+    const timer = setTimeout(loadCars, 250)
+    return () => clearTimeout(timer)
+  }, [search, category, sort])
 
   return (
     <div className="min-h-screen bg-white">
@@ -49,7 +61,7 @@ const Cars = () => {
       <section className="max-w-6xl mx-auto px-6 md:px-10 py-8">
         <div className="flex items-center justify-between mb-5">
           <p className="text-xs text-gray-500">
-            Showing {filteredCars.length} Cars
+            {loading ? 'Loading cars...' : `Showing ${cars.length} Cars`}
           </p>
 
           <select
@@ -61,10 +73,17 @@ const Cars = () => {
               <option key={item}>{item}</option>
             ))}
           </select>
+          <select value={sort} onChange={e => setSort(e.target.value)} className="border border-gray-200 rounded-md px-3 py-1.5 text-xs outline-none">
+            <option value="newest">Newest</option>
+            <option value="priceAsc">Price: low to high</option>
+            <option value="priceDesc">Price: high to low</option>
+          </select>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-          {filteredCars.map(car => (
+          {error && <p className="col-span-full text-center text-sm text-red-500">{error}</p>}
+          {!loading && !error && cars.length === 0 && <p className="col-span-full text-center text-sm text-gray-500 py-12">No cars match your search.</p>}
+          {cars.map(car => (
             <CarCard key={car._id} car={car} />
           ))}
         </div>
