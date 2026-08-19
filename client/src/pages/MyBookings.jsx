@@ -52,17 +52,17 @@ const MyBookings = () => {
           >
             <div className="w-full lg:w-32">
               <img
-                src={booking.car.image}
-                alt=""
+                src={booking.car?.image || '/vite.svg'}
+                alt={booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Unavailable car'}
                 className="w-full h-24 object-cover rounded-md"
               />
 
               <p className="text-xs font-medium mt-2">
-                {booking.car.brand} {booking.car.model}
+                {booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Car no longer available'}
               </p>
 
               <p className="text-[10px] text-gray-500">
-                {booking.car.year} · {booking.car.category} · {booking.car.location}
+                {booking.car ? `${booking.car.year} · ${booking.car.category} · ${booking.car.location}` : 'Vehicle details unavailable'}
               </p>
             </div>
 
@@ -81,7 +81,7 @@ const MyBookings = () => {
 
               <div className="flex items-center gap-2">
                 <img src={assets.location_icon_colored} className="w-3" alt="" />
-                <span>Return Location: {booking.car.location}</span>
+                <span>Return Location: {booking.car?.location || 'Unavailable'}</span>
               </div>
 
               <div className="flex items-center gap-2">

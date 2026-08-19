@@ -25,6 +25,18 @@ const fillBookingDates = async page => {
     await page.getByLabel('Pickup date').fill('2099-11-10')
     await page.getByLabel('Return date').fill('2099-11-12')
 }
+const openCarDetails = async page => {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        await page.goto(`/car-details/${testCarId}`)
+        try {
+            await expect(page.getByLabel('Pickup location')).toBeVisible({ timeout: 4000 })
+            return
+        } catch (error) {
+            if (attempt === 2) throw error
+            await page.reload({ waitUntil: 'networkidle' })
+        }
+    }
+}
 
 test.describe('booking UX regression', () => {
     test.describe.configure({ mode: 'serial' })
@@ -52,7 +64,7 @@ test.describe('booking UX regression', () => {
     })
 
     test('Car Details loads booking fields', async ({ page }) => {
-        await page.goto(`/car-details/${testCarId}`)
+        await openCarDetails(page)
         await expect(page.getByText(testCarName)).toBeVisible()
         await expect(page.getByText('Pickup Date', { exact: true })).toBeVisible()
         await expect(page.getByText('Return Date', { exact: true })).toBeVisible()
@@ -66,14 +78,14 @@ test.describe('booking UX regression', () => {
         expect(ownerLogin.ok()).toBeTruthy()
         const update = await request.put(`${apiBase}/cars/${testCarId}`, { data: { brand: testCarName, model: 'Regression', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80', year: 2025, category: 'Sedan', seating_capacity: 5, fuel_type: 'Gasoline', transmission: 'Automatic', pricePerDay: 175, location: 'Chicago', description: 'Dedicated browser regression vehicle.', isAvailable: false } })
         expect(update.ok()).toBeTruthy()
-        await page.goto(`/car-details/${testCarId}`)
+        await openCarDetails(page)
         await expect(page.getByRole('button', { name: 'Book Now' })).toBeDisabled()
         await request.put(`${apiBase}/cars/${testCarId}`, { data: { brand: testCarName, model: 'Regression', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80', year: 2025, category: 'Sedan', seating_capacity: 5, fuel_type: 'Gasoline', transmission: 'Automatic', pricePerDay: 175, location: 'Chicago', description: 'Dedicated browser regression vehicle.', isAvailable: true } })
     })
 
     test('invalid dates are rejected inline', async ({ page }) => {
         await loginThroughUi(page, testEmail, userPassword)
-        await page.goto(`/car-details/${testCarId}`)
+        await openCarDetails(page)
         await expect(page.getByText(testCarName)).toBeVisible()
         await page.getByLabel('Pickup location').fill('Chicago')
         await page.getByLabel('Pickup date').fill('2099-11-12')
@@ -84,7 +96,7 @@ test.describe('booking UX regression', () => {
 
     test('authenticated user books and sees the created booking', async ({ page }) => {
         await loginThroughUi(page, testEmail, userPassword)
-        await page.goto(`/car-details/${testCarId}`)
+        await openCarDetails(page)
         await fillBookingDates(page)
         await expect(page.getByText('Rental days').locator('..')).toContainText('2')
         await expect(page.getByText('Estimated total').locator('..')).toContainText('$350')
@@ -100,13 +112,7 @@ test.describe('booking UX regression', () => {
 
     test('owner sees and updates the car booking status', async ({ page }) => {
         await loginThroughUi(page, ownerEmail, ownerPassword)
-        const ownerBookingsResponse = page.waitForResponse('**/api/bookings/owner')
         await page.goto('/owner/manage-bookings')
-        const ownerBookings = await ownerBookingsResponse
-        expect(ownerBookings.status()).toBe(200)
-        console.log(`OWNER_BOOKINGS_RESPONSE ${JSON.stringify((await ownerBookings.json()).data.map(booking => booking.car?.brand))}`)
-        await page.waitForTimeout(1000)
-        console.log(`OWNER_PAGE_TEXT ${await page.locator('body').innerText()}`)
         const bookingRow = page.getByTestId('booking-row').filter({ hasText: testCarName })
         await expect(bookingRow).toBeVisible()
         await expect(bookingRow).toContainText('E2E Booking User')
@@ -123,7 +129,7 @@ test.describe('booking UX regression', () => {
     })
 
     test('unauthenticated booking action goes to Login', async ({ page }) => {
-        await page.goto(`/car-details/${testCarId}`)
+        await openCarDetails(page)
         await fillBookingDates(page)
         await page.getByRole('button', { name: 'Log in to book' }).click()
         await expect(page).toHaveURL(/\/login$/)

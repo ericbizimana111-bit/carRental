@@ -54,13 +54,13 @@ const ManageBookings = () => {
                     >
                         <div className="flex items-center gap-3">
                             <img
-                                src={booking.car.image}
+                                src={booking.car?.image || '/vite.svg'}
                                 className="w-10 h-8 object-cover rounded"
-                                alt=""
+                                alt={booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Unavailable car'}
                             />
                             <div>
                             <p className="text-xs">
-                                {booking.car.brand} {booking.car.model}
+                                {booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Car no longer available'}
                             </p>
                             <p className="text-[9px] text-gray-400">{booking.user?.name}</p>
                             </div>
