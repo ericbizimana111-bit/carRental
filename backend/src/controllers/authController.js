@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
-import generateToken from '../utils/generateToken.js'
+import generateToken from '../utils/generateTokens.js'
+import crypto from 'crypto'
+import { sendPasswordResetEmail } from '../services/emailService.js'
 
 const cookieOptions = {
     httpOnly: true,
@@ -151,4 +153,33 @@ export const getMe = async (req, res) => {
             phone: req.user.phone
         }
     })
+}
+
+export const forgotPassword = async (req, res) => {
+    const response = { success: true, message: 'If an account matches that email, reset instructions will be sent.' }
+    const email = req.body.email?.toLowerCase().trim()
+    if (!email) return res.json(response)
+
+    const user = await User.findOne({ email }).select('+resetPasswordToken +resetPasswordExpires')
+    if (!user) return res.json(response)
+
+    const token = crypto.randomBytes(32).toString('hex')
+    user.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex')
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000
+    await user.save()
+    await sendPasswordResetEmail({ email: user.email, token })
+    res.json(response)
+}
+
+export const resetPassword = async (req, res) => {
+    const tokenHash = crypto.createHash('sha256').update(req.params.token || '').digest('hex')
+    const user = await User.findOne({ resetPasswordToken: tokenHash, resetPasswordExpires: { $gt: Date.now() } }).select('+resetPasswordToken +resetPasswordExpires')
+    if (!user) return res.status(400).json({ success: false, message: 'Reset token is invalid or expired' })
+    if (!req.body.password || req.body.password.length < 6) return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' })
+
+    user.password = await bcrypt.hash(req.body.password, 12)
+    user.resetPasswordToken = null
+    user.resetPasswordExpires = null
+    await user.save()
+    res.json({ success: true, message: 'Password reset successfully' })
 }

@@ -6,17 +6,25 @@ const ManageBookings = () => {
     const currency = import.meta.env.VITE_CURRENCY
     const [bookings, setBookings] = useState([])
     const [message, setMessage] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [updatingId, setUpdatingId] = useState(null)
 
     const loadBookings = async () => {
-        try { setBookings((await api.get('/bookings/owner')).data.data || []) } catch (error) { setMessage(error.response?.data?.message || 'Unable to load bookings') }
+        setLoading(true)
+        try { setBookings((await api.get('/bookings/owner')).data.data || []) } catch (error) { setMessage(error.response?.data?.message || 'Unable to load bookings') } finally { setLoading(false) }
     }
     useEffect(() => {
         let active = true
-        api.get('/bookings/owner').then(response => { if (active) setBookings(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') })
+        api.get('/bookings/owner').then(response => { if (active) setBookings(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') }).finally(() => { if (active) setLoading(false) })
         return () => { active = false }
     }, [])
     const updateStatus = async (id, status) => {
-        try { await api.patch(`/bookings/${id}/status`, { status }); loadBookings() } catch (error) { setMessage(error.response?.data?.message || 'Unable to update booking') }
+        setUpdatingId(id)
+        setMessage('')
+        try {
+            const response = await api.put(`/bookings/${id}/status`, { status })
+            setBookings(current => current.map(booking => booking._id === id ? response.data.data : booking))
+        } catch (error) { setMessage(error.response?.data?.message || 'Unable to update booking') } finally { setUpdatingId(null) }
     }
 
     return (
@@ -35,6 +43,8 @@ const ManageBookings = () => {
                     <span>Actions</span>
                 </div>
 
+                {loading && <p className="p-4 text-xs text-gray-500">Loading bookings...</p>}
+                {!loading && !message && bookings.length === 0 && <p className="p-4 text-xs text-gray-500">No bookings for your cars yet.</p>}
                 {message && <p className="p-4 text-xs text-red-500">{message}</p>}
                 {bookings.map(booking => (
                     <div
@@ -60,15 +70,15 @@ const ManageBookings = () => {
                         </p>
 
                         <p className="text-[10px]">
-                            {currency}{booking.price}
+                            {currency}{booking.totalPrice}
                         </p>
 
                         <StatusBadge status={booking.status} />
 
                         <div className="flex gap-2">
-                            {booking.status === 'pending' && <button onClick={() => updateStatus(booking._id, 'confirmed')} className="border rounded px-2 py-1 text-[9px] text-blue-600 w-fit">Confirm</button>}
-                            {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => updateStatus(booking._id, 'cancelled')} className="border rounded px-2 py-1 text-[9px] text-red-500 w-fit">Cancel</button>}
-                            {booking.status === 'confirmed' && <button onClick={() => updateStatus(booking._id, 'completed')} className="border rounded px-2 py-1 text-[9px] text-green-600 w-fit">Complete</button>}
+                            {booking.status === 'pending' && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'confirmed')} className="border rounded px-2 py-1 text-[9px] text-blue-600 disabled:text-gray-300 w-fit">{updatingId === booking._id ? 'Updating...' : 'Confirm'}</button>}
+                            {['pending', 'confirmed'].includes(booking.status) && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'cancelled')} className="border rounded px-2 py-1 text-[9px] text-red-500 disabled:text-gray-300 w-fit">Cancel</button>}
+                            {booking.status === 'confirmed' && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'completed')} className="border rounded px-2 py-1 text-[9px] text-green-600 disabled:text-gray-300 w-fit">Complete</button>}
                         </div>
                     </div>
                 ))}

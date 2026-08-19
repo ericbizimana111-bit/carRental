@@ -8,6 +8,7 @@ const MyBookings = () => {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
+  const [cancellingId, setCancellingId] = useState(null)
 
   const loadBookings = async () => {
     try {
@@ -21,17 +22,13 @@ const MyBookings = () => {
   useEffect(() => { loadBookings() }, [])
 
   const cancelBooking = async id => {
+    if (!window.confirm('Cancel this booking?')) return
+    setCancellingId(id)
+    setMessage('')
     try {
-      await api.patch(`/bookings/${id}/cancel`)
-      loadBookings()
-    } catch (error) { setMessage(error.response?.data?.message || 'Unable to cancel booking') }
-  }
-
-  const startPayment = async id => {
-    try {
-      const response = await api.post(`/payments/${id}/create`)
-      setMessage(response.data.message || 'Payment initialized')
-    } catch (error) { setMessage(error.response?.data?.message || 'Payment is currently unavailable') }
+      await api.delete(`/bookings/${id}`)
+      setBookings(current => current.map(booking => booking._id === id ? { ...booking, status: 'cancelled' } : booking))
+    } catch (error) { setMessage(error.response?.data?.message || 'Unable to cancel booking') } finally { setCancellingId(null) }
   }
 
   return (
@@ -45,7 +42,7 @@ const MyBookings = () => {
       </p>
 
       <div className="mt-7 space-y-4">
-        {loading && <p className="text-sm text-gray-500">Loading bookings...</p>}
+        {loading && <div className="space-y-4" aria-label="Loading bookings"><div className="h-28 rounded-lg bg-gray-100 animate-pulse" /><div className="h-28 rounded-lg bg-gray-100 animate-pulse" /></div>}
         {message && <p className="text-sm text-red-500">{message}</p>}
         {!loading && !message && bookings.length === 0 && <p className="text-sm text-gray-500">You do not have any bookings yet.</p>}
         {bookings.map(booking => (
@@ -99,10 +96,10 @@ const MyBookings = () => {
               </p>
 
               <p className="text-lg font-semibold text-blue-600">
-                {currency}{booking.price}
+                {currency}{booking.totalPrice}
               </p>
-              {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => cancelBooking(booking._id)} className="text-[10px] text-red-500 mt-2">Cancel booking</button>}
-              {booking.status === 'confirmed' && booking.paymentStatus !== 'paid' && <button onClick={() => startPayment(booking._id)} className="block text-[10px] text-primary mt-2">Pay securely</button>}
+              {['pending', 'confirmed'].includes(booking.status) && <button disabled={cancellingId === booking._id} onClick={() => cancelBooking(booking._id)} className="text-[10px] text-red-500 disabled:text-gray-300 mt-2">{cancellingId === booking._id ? 'Cancelling...' : 'Cancel booking'}</button>}
+              <p className="text-[10px] text-gray-500 mt-2">Rental days: {Math.max(Math.ceil((new Date(booking.returnDate) - new Date(booking.pickupDate)) / 86400000), 1)}</p>
             </div>
           </div>
         ))}

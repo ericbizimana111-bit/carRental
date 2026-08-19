@@ -73,7 +73,7 @@ const Dashboard = () => {
                                     </p>
                                 </div>
 
-                                <p className="text-xs">{currency}{booking.price}</p>
+                                <p className="text-xs">{currency}{booking.totalPrice}</p>
                                 <StatusBadge status={booking.status} />
                             </div>
                         ))}

@@ -14,6 +14,7 @@ const CarDetails = () => {
   const [error, setError] = useState('')
   const [pickupLocation, setPickupLocation] = useState('')
   const [bookingMessage, setBookingMessage] = useState('')
+  const [bookingError, setBookingError] = useState('')
   const [bookingLoading, setBookingLoading] = useState(false)
   const [reviews, setReviews] = useState([])
   const [rating, setRating] = useState(0)
@@ -49,15 +50,36 @@ const CarDetails = () => {
     return <p className="mt-20 text-center text-gray-500">Car not found</p>
   }
 
+  const rentalDays = pickupDate && returnDate
+    ? Math.max(Math.ceil((new Date(`${returnDate}T00:00:00`) - new Date(`${pickupDate}T00:00:00`)) / 86400000), 0)
+    : 0
+  const estimatedTotal = rentalDays * car.pricePerDay
+  const dateError = !pickupDate || !returnDate
+    ? 'Select both pickup and return dates'
+    : rentalDays < 1
+      ? 'Return date must be on or after pickup date'
+      : ''
+  const today = new Date().toISOString().slice(0, 10)
+
   const submitBooking = async event => {
     event.preventDefault()
+    if (!user) {
+      navigate('/login', { state: { from: `/car-details/${car._id}` } })
+      return
+    }
+    if (dateError || !pickupLocation.trim()) {
+      setBookingError(dateError || 'Enter a pickup location')
+      return
+    }
     setBookingLoading(true)
     setBookingMessage('')
+    setBookingError('')
     try {
       await api.post('/bookings', { carId: car._id, pickupLocation, pickupDate, returnDate })
       setBookingMessage('Booking request created successfully')
+      setTimeout(() => navigate('/my-bookings'), 800)
     } catch (requestError) {
-      setBookingMessage(requestError.response?.data?.message || 'Unable to create booking')
+      setBookingError(requestError.response?.data?.message || 'Unable to create booking')
     } finally {
       setBookingLoading(false)
     }
@@ -175,13 +197,15 @@ const CarDetails = () => {
 
           <div className="mt-5">
             <label className="text-[10px]">Pickup Location</label>
-            <input value={pickupLocation} onChange={e => setPickupLocation(e.target.value)} required placeholder="Enter pickup location" className="w-full border border-gray-200 rounded-md px-2 py-2 mt-1 text-xs outline-none" />
+            <input aria-label="Pickup location" value={pickupLocation} onChange={e => setPickupLocation(e.target.value)} required placeholder="Enter pickup location" className="w-full border border-gray-200 rounded-md px-2 py-2 mt-1 text-xs outline-none" />
           </div>
 
           <div className="mt-3">
             <label className="text-[10px]">Pickup Date</label>
             <input
               type="date"
+              aria-label="Pickup date"
+              min={today}
               value={pickupDate}
               onChange={e => setPickupDate(e.target.value)}
               className="w-full border border-gray-200 rounded-md px-2 py-2 mt-1 text-xs outline-none"
@@ -192,21 +216,32 @@ const CarDetails = () => {
             <label className="text-[10px]">Return Date</label>
             <input
               type="date"
+              aria-label="Return date"
+              min={pickupDate || today}
               value={returnDate}
               onChange={e => setReturnDate(e.target.value)}
               className="w-full border border-gray-200 rounded-md px-2 py-2 mt-1 text-xs outline-none"
             />
           </div>
 
+          <div className="border-t border-gray-100 mt-4 pt-4 space-y-1 text-[10px] text-gray-500">
+            <div className="flex justify-between"><span>Rental days</span><span>{rentalDays || '-'}</span></div>
+            <div className="flex justify-between"><span>Price per day</span><span>{import.meta.env.VITE_CURRENCY}{car.pricePerDay}</span></div>
+            <div className="flex justify-between text-sm font-semibold text-gray-900"><span>Estimated total</span><span>{rentalDays ? `${import.meta.env.VITE_CURRENCY}${estimatedTotal}` : '-'}</span></div>
+          </div>
+
           <button
             type="submit"
-            disabled={!car.isAvailable || bookingLoading}
+            disabled={!user || !car.isAvailable || bookingLoading || Boolean(dateError) || !pickupLocation.trim()}
             className="w-full bg-primary disabled:bg-gray-300 text-white rounded-md py-2 mt-5 text-xs"
           >
             {bookingLoading ? 'Booking...' : 'Book Now'}
           </button>
 
-          {bookingMessage && <p className="text-[10px] text-center text-gray-500 mt-3">{bookingMessage}</p>}
+          {!user && <button type="button" onClick={() => navigate('/login', { state: { from: `/car-details/${car._id}` } })} className="w-full border border-primary text-primary rounded-md py-2 mt-2 text-xs">Log in to book</button>}
+          {bookingMessage && <p role="status" className="text-[10px] text-center text-green-600 mt-3">{bookingMessage}</p>}
+          {bookingError && <p role="alert" className="text-[10px] text-center text-red-500 mt-3">{bookingError}</p>}
+          {dateError && <p className="text-[10px] text-red-500 mt-2">{dateError}</p>}
 
           <p className="text-[9px] text-gray-400 text-center mt-3">
             No credit card required to reserve
