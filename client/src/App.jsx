@@ -16,6 +16,7 @@ import Signup from './pages/Signup'
 import ProtectedRoute from './components/ProtectedRoute'
 import Admin from './pages/Admin'
 import Favorites from './pages/Favorites'
+import Notifications from './pages/Notifications'
 
 const PublicLayout = () => (
   <>
@@ -27,6 +28,7 @@ const PublicLayout = () => (
         <Route path="/car-details/:id" element={<CarDetails />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
