@@ -27,6 +27,13 @@ const MyBookings = () => {
     } catch (error) { setMessage(error.response?.data?.message || 'Unable to cancel booking') }
   }
 
+  const startPayment = async id => {
+    try {
+      const response = await api.post(`/payments/${id}/create`)
+      setMessage(response.data.message || 'Payment initialized')
+    } catch (error) { setMessage(error.response?.data?.message || 'Payment is currently unavailable') }
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12">
       <h1 className="text-2xl font-semibold text-gray-900">
@@ -95,6 +102,7 @@ const MyBookings = () => {
                 {currency}{booking.price}
               </p>
               {['pending', 'confirmed'].includes(booking.status) && <button onClick={() => cancelBooking(booking._id)} className="text-[10px] text-red-500 mt-2">Cancel booking</button>}
+              {booking.status === 'confirmed' && booking.paymentStatus !== 'paid' && <button onClick={() => startPayment(booking._id)} className="block text-[10px] text-primary mt-2">Pay securely</button>}
             </div>
           </div>
         ))}

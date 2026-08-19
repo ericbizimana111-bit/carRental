@@ -7,7 +7,11 @@ const Notifications = () => {
     const load = async () => {
         try { setNotifications((await api.get('/notifications')).data.data || []) } catch (requestError) { setError(requestError.response?.data?.message || 'Unable to load notifications') }
     }
-    useEffect(() => { load() }, [])
+    useEffect(() => {
+        let active = true
+        api.get('/notifications').then(response => { if (active) setNotifications(response.data.data || []) }).catch(requestError => { if (active) setError(requestError.response?.data?.message || 'Unable to load notifications') })
+        return () => { active = false }
+    }, [])
     const markRead = async id => { await api.patch(`/notifications/${id}/read`); load() }
     const markAll = async () => { await api.patch('/notifications/read-all'); load() }
     return <div className="max-w-3xl mx-auto px-6 md:px-10 py-12">

@@ -17,6 +17,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Admin from './pages/Admin'
 import Favorites from './pages/Favorites'
 import Notifications from './pages/Notifications'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import Profile from './pages/Profile'
 
 const PublicLayout = () => (
   <>
@@ -31,6 +34,9 @@ const PublicLayout = () => (
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </main>
     <Footer />

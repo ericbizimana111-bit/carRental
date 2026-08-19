@@ -1,7 +1,7 @@
 import React from 'react'
-import { ownerMenuLinks } from '../assets/assets'
+import { assets, ownerMenuLinks } from '../assets/assets'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 
 const OwnerSidebar = () => {
     const location = useLocation()
@@ -11,7 +11,7 @@ const OwnerSidebar = () => {
         <aside className="w-52 shrink-0 border-r border-gray-200 min-h-[calc(100vh-65px)]">
             <div className="flex flex-col items-center py-6 border-b border-gray-100">
                 <img
-                    src={user?.image || ''}
+                    src={user?.image || assets.user_profile}
                     className="w-11 h-11 rounded-full object-cover"
                     alt=""
                 />

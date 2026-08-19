@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 
 const Login = () => {
     const { login } = useAuth()
@@ -31,6 +31,7 @@ const Login = () => {
             {error && <p className="text-xs text-red-500">{error}</p>}
             <button disabled={submitting} className="w-full bg-primary disabled:bg-gray-300 text-white rounded-md py-3 text-sm">{submitting ? 'Logging in...' : 'Log in'}</button>
             <p className="text-xs text-gray-500 text-center">New here? <Link to="/signup" className="text-primary">Create an account</Link></p>
+            <Link to="/forgot-password" className="block text-center text-xs text-primary">Forgot password?</Link>
         </form>
     </div>
 }

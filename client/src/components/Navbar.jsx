@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { assets, menuLinks } from '../assets/assets'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/useAuth'
 import api from '../services/api'
 
 const Navbar = () => {
@@ -13,10 +13,7 @@ const Navbar = () => {
     const [unreadNotifications, setUnreadNotifications] = useState(0)
 
     useEffect(() => {
-        if (!user) {
-            setUnreadNotifications(0)
-            return
-        }
+        if (!user) return
         api.get('/notifications').then(response => setUnreadNotifications(response.data.unread || 0)).catch(() => setUnreadNotifications(0))
     }, [user])
 
@@ -55,6 +52,7 @@ const Navbar = () => {
                     {!loading && user && user.role === 'admin' && <button onClick={() => navigate('/admin')} className='cursor-pointer'>Admin</button>}
                     {!loading && user ? <>
                         <span className="text-sm text-gray-700">{user.name}</span>
+                        <button onClick={() => navigate('/profile')} className='text-xs text-primary'>Profile</button>
                         {unreadNotifications > 0 && <button onClick={() => navigate('/notifications')} className="text-xs text-primary">Notifications ({unreadNotifications})</button>}
                         <button onClick={logout} className='cursor-pointer px-5 py-2 border border-borderColor rounded-lg'>Logout</button>
                     </> : <button onClick={() => navigate('/login')} className='cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg'>Login</button>}

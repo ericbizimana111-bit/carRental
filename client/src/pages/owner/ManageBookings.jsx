@@ -10,7 +10,11 @@ const ManageBookings = () => {
     const loadBookings = async () => {
         try { setBookings((await api.get('/bookings/owner')).data.data || []) } catch (error) { setMessage(error.response?.data?.message || 'Unable to load bookings') }
     }
-    useEffect(() => { loadBookings() }, [])
+    useEffect(() => {
+        let active = true
+        api.get('/bookings/owner').then(response => { if (active) setBookings(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') })
+        return () => { active = false }
+    }, [])
     const updateStatus = async (id, status) => {
         try { await api.patch(`/bookings/${id}/status`, { status }); loadBookings() } catch (error) { setMessage(error.response?.data?.message || 'Unable to update booking') }
     }

@@ -16,7 +16,11 @@ const ManageCars = () => {
         }
     }
 
-    useEffect(() => { loadCars() }, [])
+    useEffect(() => {
+        let active = true
+        api.get('/cars/owner/list').then(response => { if (active) setCars(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load cars') })
+        return () => { active = false }
+    }, [])
 
     const toggleAvailability = async car => {
         try {
