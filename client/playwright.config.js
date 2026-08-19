@@ -7,7 +7,7 @@ export default defineConfig({
     workers: 1,
     reporter: 'list',
     use: {
-        baseURL: process.env.FRONTEND_URL || 'http://localhost:5174',
+        baseURL: process.env.FRONTEND_URL || 'http://localhost:5173',
         headless: true,
         trace: 'retain-on-failure'
     }

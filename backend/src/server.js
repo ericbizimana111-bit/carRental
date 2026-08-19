@@ -33,7 +33,7 @@ app.use(cors({
 }))
 
 app.use(helmet())
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }))
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: process.env.NODE_ENV === 'production' ? 300 : 2000, standardHeaders: 'draft-7', legacyHeaders: false }))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
