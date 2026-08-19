@@ -41,6 +41,10 @@ test.describe('booking UX regression', () => {
     })
 
     test.afterAll(async ({ request }) => {
+        if (testBookingId) {
+            const userLogin = await request.post(`${apiBase}/auth/login`, { data: { email: testEmail, password: userPassword } })
+            if (userLogin.ok()) await request.delete(`${apiBase}/bookings/${testBookingId}`)
+        }
         const adminLogin = await request.post(`${apiBase}/auth/login`, { data: { email: 'admin@local.test', password: ownerPassword } })
         if (!adminLogin.ok()) return
         if (testCarId) await request.delete(`${apiBase}/cars/${testCarId}`)
@@ -70,6 +74,7 @@ test.describe('booking UX regression', () => {
     test('invalid dates are rejected inline', async ({ page }) => {
         await loginThroughUi(page, testEmail, userPassword)
         await page.goto(`/car-details/${testCarId}`)
+        await expect(page.getByText(testCarName)).toBeVisible()
         await page.getByLabel('Pickup location').fill('Chicago')
         await page.getByLabel('Pickup date').fill('2099-11-12')
         await page.getByLabel('Return date').fill('2099-11-10')
@@ -98,7 +103,8 @@ test.describe('booking UX regression', () => {
         await page.goto('/owner/manage-bookings')
         await expect(page.getByText(testCarName)).toBeVisible()
         await expect(page.getByText('E2E Booking User')).toBeVisible()
-        await page.getByRole('button', { name: 'Confirm' }).click()
+        const bookingRow = page.locator('div').filter({ hasText: testCarName }).filter({ hasText: 'E2E Booking User' }).last()
+        await bookingRow.getByRole('button', { name: 'Confirm' }).click()
         await expect(page.getByText('Confirmed')).toBeVisible()
     })
 
