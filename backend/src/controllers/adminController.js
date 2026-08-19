@@ -5,12 +5,14 @@ import Booking from '../models/Booking.js'
 
 export const getAdminStats = async (req, res) => {
     const [users, owners, cars, bookings] = await Promise.all([
-        User.countDocuments(), User.countDocuments({ role: 'owner' }), Car.countDocuments(), Booking.find().select('price status')
+        User.countDocuments(), User.countDocuments({ role: 'owner' }), Car.countDocuments(), Booking.find().select('totalPrice status')
     ])
-    res.json({ success: true, data: {
-        users, owners, cars, bookings: bookings.length,
-        revenue: bookings.filter(booking => booking.status === 'completed').reduce((total, booking) => total + booking.totalPrice, 0)
-    } })
+    res.json({
+        success: true, data: {
+            users, owners, cars, bookings: bookings.length,
+            revenue: bookings.filter(booking => booking.status === 'completed').reduce((total, booking) => total + booking.totalPrice, 0)
+        }
+    })
 }
 
 export const getAdminUsers = async (req, res) => {
