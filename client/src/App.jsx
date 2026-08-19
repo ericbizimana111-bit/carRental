@@ -29,7 +29,7 @@ const PublicLayout = () => (
         <Route path="/" element={<Home />} />
         <Route path="/cars" element={<Cars />} />
         <Route path="/car-details/:id" element={<CarDetails />} />
-        <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />

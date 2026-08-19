@@ -20,10 +20,6 @@ const loginThroughUi = async (page, email, password) => {
     await expect(page).toHaveURL(/\/$/)
 }
 
-const loginAsOwner = async (page) => {
-    await loginThroughUi(page, ownerEmail, ownerPassword)
-}
-
 const fillBookingDates = async (page) => {
     await page.getByLabel('Pickup location').fill('Chicago')
     await page.getByLabel('Pickup date').fill('2099-12-10')
@@ -173,7 +169,7 @@ test.describe('booking UX regression', () => {
         expect(testBookingId).toBeTruthy()
     })
 
-    test('overlapping bookings are rejected', async ({ page, request }) => {
+    test('overlapping bookings are rejected', async ({ request }) => {
         const userLogin = await request.post(`${apiBase}/auth/login`, { data: { email: testEmail, password: userPassword } })
         expect(userLogin.ok()).toBeTruthy()
         const response = await request.post(`${apiBase}/bookings`, { data: { carId: testCarId, pickupLocation: 'Chicago', pickupDate: '2099-12-11', returnDate: '2099-12-13' } })
