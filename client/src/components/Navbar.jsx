@@ -39,25 +39,20 @@ const Navbar = () => {
                     </Link>
                 ))}
 
-                <div className='hidden lg:flex items:center text-sm gap-2 border border-borderColor px-3 rounded-full max-w-56'>
-                    <input type="text" className="py-1.5 w-full bg-transparent 
-                    outline-none  placeholder-gray-500"  placeholder='Searh Products' />
-                    <img src={assets.search_icon} alt="search" />
-                </div>
+            
 
-
-                <div className='flex max-sm:flex-col items:start sm:items-center gap-6'>
-
+                < div className='flex max-sm:flex-col items:start sm:items-center gap-6' >
                     {!loading && user && user.role === 'owner' && <button onClick={() => navigate('/owner')} className='cursor-pointer'>Dashboard</button>}
                     {!loading && user && user.role === 'admin' && <button onClick={() => navigate('/admin')} className='cursor-pointer'>Admin</button>}
-                    {!loading && user ? <>
-                        <span className="text-sm text-gray-700">{user.name}</span>
-                        <button onClick={() => navigate('/profile')} className='text-xs text-primary'>Profile</button>
-                        {unreadNotifications > 0 && <button onClick={() => navigate('/notifications')} className="text-xs text-primary">Notifications ({unreadNotifications})</button>}
-                        <button onClick={logout} className='cursor-pointer px-5 py-2 border border-borderColor rounded-lg'>Logout</button>
-                    </> : <button onClick={() => navigate('/login')} className='cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg'>Login</button>}
-
-                </div>
+                    {
+                        !loading && user ? <>
+                            <span className="text-sm text-gray-700">{user.name}</span>
+                            <button onClick={() => navigate('/profile')} className='text-xs text-primary'>Profile</button>
+                            {unreadNotifications > 0 && <button onClick={() => navigate('/notifications')} className="text-xs text-primary">Notifications ({unreadNotifications})</button>}
+                            <button onClick={logout} className='cursor-pointer px-5 py-2 border border-borderColor rounded-lg'>Logout</button>
+                        </> : <button onClick={() => navigate('/login')} className='cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg'>Login</button>
+                    }
+                </div >
 
             </div>
 
@@ -70,3 +65,4 @@ const Navbar = () => {
 }
 
 export default Navbar
+
