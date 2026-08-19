@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test'
-import mongoose from 'mongoose'
 
 const apiBase = process.env.API_URL || 'http://localhost:5000/api'
 const ownerEmail = process.env.E2E_OWNER_EMAIL || 'owner@local.test'
@@ -41,27 +40,20 @@ test.describe('booking UX regression', () => {
         testUserId = (await userResponse.json()).user.id
     })
 
-    test.afterAll(async () => {
-        const connection = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/carrental')
-        const ids = [testUserId, testCarId].filter(Boolean).map(id => new mongoose.Types.ObjectId(id))
-        await Promise.all([
-            connection.connection.db.collection('notifications').deleteMany({ user: { $in: ids } }),
-            connection.connection.db.collection('reviews').deleteMany({ user: { $in: ids } }),
-            connection.connection.db.collection('favorites').deleteMany({ user: { $in: ids }, car: { $in: ids } }),
-            connection.connection.db.collection('bookings').deleteMany({ $or: [{ user: { $in: ids } }, { car: { $in: ids } }, { owner: { $in: ids } }] }),
-            connection.connection.db.collection('cars').deleteMany({ _id: { $in: ids } }),
-            connection.connection.db.collection('users').deleteMany({ _id: { $in: ids } })
-        ])
-        await mongoose.disconnect()
+    test.afterAll(async ({ request }) => {
+        const adminLogin = await request.post(`${apiBase}/auth/login`, { data: { email: 'admin@local.test', password: ownerPassword } })
+        if (!adminLogin.ok()) return
+        if (testCarId) await request.delete(`${apiBase}/cars/${testCarId}`)
+        if (testUserId) await request.delete(`${apiBase}/admin/users/${testUserId}`)
     })
 
     test('Car Details loads booking fields', async ({ page }) => {
         await page.goto(`/car-details/${testCarId}`)
         await expect(page.getByText(testCarName)).toBeVisible()
-        await expect(page.getByText('Pickup Date')).toBeVisible()
-        await expect(page.getByText('Return Date')).toBeVisible()
-        await expect(page.getByText('Rental days')).toBeVisible()
-        await expect(page.getByText('Estimated total')).toBeVisible()
+        await expect(page.getByText('Pickup Date', { exact: true })).toBeVisible()
+        await expect(page.getByText('Return Date', { exact: true })).toBeVisible()
+        await expect(page.getByText('Rental days', { exact: true })).toBeVisible()
+        await expect(page.getByText('Estimated total', { exact: true })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Book Now' })).toBeVisible()
     })
 
@@ -86,6 +78,7 @@ test.describe('booking UX regression', () => {
     })
 
     test('authenticated user books and sees the created booking', async ({ page }) => {
+        await loginThroughUi(page, testEmail, userPassword)
         await page.goto(`/car-details/${testCarId}`)
         await fillBookingDates(page)
         await expect(page.getByText('Rental days').locator('..')).toContainText('2')
