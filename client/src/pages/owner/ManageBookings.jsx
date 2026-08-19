@@ -9,10 +9,6 @@ const ManageBookings = () => {
     const [loading, setLoading] = useState(true)
     const [updatingId, setUpdatingId] = useState(null)
 
-    const loadBookings = async () => {
-        setLoading(true)
-        try { setBookings((await api.get('/bookings/owner')).data.data || []) } catch (error) { setMessage(error.response?.data?.message || 'Unable to load bookings') } finally { setLoading(false) }
-    }
     useEffect(() => {
         let active = true
         api.get('/bookings/owner').then(response => { if (active) setBookings(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') }).finally(() => { if (active) setLoading(false) })

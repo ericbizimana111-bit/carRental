@@ -10,8 +10,6 @@ let testUserId
 let testCarId
 let testBookingId
 
-const apiJson = value => ({ data: value })
-
 const loginThroughUi = async (page, email, password) => {
     await page.goto('/login')
     await page.getByPlaceholder('Email address').fill(email)
