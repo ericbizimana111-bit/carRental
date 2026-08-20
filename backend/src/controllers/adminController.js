@@ -44,6 +44,14 @@ export const getAdminCars = async (req, res) => {
 }
 
 export const getAdminBookings = async (req, res) => {
-    const bookings = await Booking.find().populate('car', 'brand model image').populate('user', 'name email').populate('owner', 'name email').sort('-createdAt')
+    const filters = {}
+    if (req.query.owner && mongoose.Types.ObjectId.isValid(req.query.owner)) {
+        filters.owner = req.query.owner
+    }
+    const bookings = await Booking.find(filters)
+        .populate('car', 'brand model image')
+        .populate('user', 'name email')
+        .populate('owner', 'name email')
+        .sort('-createdAt')
     res.json({ success: true, data: bookings })
 }

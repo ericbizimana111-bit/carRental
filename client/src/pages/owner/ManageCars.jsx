@@ -1,37 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import { assets } from '../../assets/assets'
 import api from '../../services/api'
-import { Link } from 'react-router-dom'
+import CarCard from '../../components/CarCard'
 import ConfirmModal from '../../components/ConfirmModal'
 
 const ManageCars = () => {
-    const currency = import.meta.env.VITE_CURRENCY
     const [cars, setCars] = useState([])
     const [message, setMessage] = useState('')
     const [deleteId, setDeleteId] = useState(null)
     const [deleting, setDeleting] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const loadCars = async () => {
+        setLoading(true)
         try {
             const response = await api.get('/cars/owner/list')
             setCars(response.data.data || [])
         } catch (error) {
             setMessage(error.response?.data?.message || 'Unable to load cars')
+        } finally {
+            setLoading(false)
         }
     }
 
-    useEffect(() => {
-        let active = true
-        api.get('/cars/owner/list').then(response => { if (active) setCars(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load cars') })
-        return () => { active = false }
-    }, [])
-
-    const toggleAvailability = async car => {
-        try {
-            await api.put(`/cars/${car._id}`, { ...car, owner: undefined, isAvailable: !car.isAvailable })
-            loadCars()
-        } catch (error) { setMessage(error.response?.data?.message || 'Unable to update car') }
-    }
+    useEffect(() => { loadCars() }, [])
 
     const deleteCar = async () => {
         if (!deleteId) return
@@ -40,72 +31,47 @@ const ManageCars = () => {
             await api.delete(`/cars/${deleteId}`)
             setDeleteId(null)
             loadCars()
-        } catch (error) { setMessage(error.response?.data?.message || 'Unable to delete car') }
-        finally { setDeleting(false) }
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Unable to delete car')
+        } finally {
+            setDeleting(false)
+        }
     }
 
     return (
-        <div className="p-6 md:p-8 max-w-6xl">
-            <h1 className="text-2xl font-semibold">Manage Cars</h1>
-            <p className="text-xs text-gray-500 mt-1">
-                View all listed cars, update their details, or remove them from the booking platform
+        <div className="page-container !max-w-7xl">
+            <h1 className="page-title">Manage Cars</h1>
+            <p className="page-subtitle">
+                View, edit, or remove your listed vehicles from the platform.
             </p>
 
-            <div className="border rounded-lg overflow-hidden mt-7">
-                <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_80px] px-4 py-3 border-b text-[10px] text-gray-500">
-                    <span>Car</span>
-                    <span>Category</span>
-                    <span>Price</span>
-                    <span>Status</span>
-                    <span>Actions</span>
+            {message && <p className="mt-4 text-sm text-red-500">{message}</p>}
+
+            {loading ? (
+                <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {[1, 2, 3].map(i => <div key={i} className="h-72 animate-pulse rounded-xl bg-slate-100" />)}
                 </div>
+            ) : cars.length === 0 ? (
+                <p className="mt-8 rounded-xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
+                    You have not listed any cars yet.
+                </p>
+            ) : (
+                <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {cars.map(car => (
+                        <CarCard key={car._id} car={car} ownerMode onDelete={setDeleteId} />
+                    ))}
+                </div>
+            )}
 
-                {message && <p className="p-4 text-xs text-red-500">{message}</p>}
-                {cars.map(car => (
-                    <div
-                        key={car._id}
-                        className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr_80px] gap-3 md:gap-0 items-center px-4 py-3 border-b last:border-0"
-                    >
-                        <div className="flex items-center gap-3">
-                            <img
-                                src={car.image}
-                                className="w-10 h-8 object-cover rounded"
-                                alt=""
-                            />
-
-                            <div>
-                                <p className="text-xs">{car.brand} {car.model}</p>
-                                <p className="text-[9px] text-gray-400">
-                                    {car.seating_capacity} seats · {car.transmission}
-                                </p>
-                            </div>
-                        </div>
-
-                        <p className="text-[10px] text-gray-600">
-                            {car.category}
-                        </p>
-
-                        <p className="text-[10px] text-gray-600">
-                            {currency}{car.pricePerDay}/day
-                        </p>
-
-                        <span className={`w-fit px-2.5 py-1 rounded-full text-[9px] ${car.isAvailable ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>
-                            {car.isAvailable ? 'Available' : 'Not Available'}
-                        </span>
-
-                        <div className="flex items-center gap-4">
-                            <button onClick={() => toggleAvailability(car)} className="hover:opacity-60" title="Toggle availability">
-                                <img src={assets.eye_icon} className="w-4" alt="" />
-                            </button>
-                            <Link to={`/owner/edit-car/${car._id}`} className="rounded border border-slate-200 px-2 py-1 text-[10px] text-blue-600">Edit</Link>
-                            <button onClick={() => setDeleteId(car._id)} className="hover:opacity-60" title="Delete car">
-                                <img src={assets.delete_icon} className="w-4" alt="" />
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <ConfirmModal open={Boolean(deleteId)} title="Delete this car?" message="Are you sure you want to delete this car? This action cannot be undone." confirmLabel="Delete car" onConfirm={deleteCar} onCancel={() => setDeleteId(null)} busy={deleting} />
+            <ConfirmModal
+                open={Boolean(deleteId)}
+                title="Delete this car?"
+                message="Are you sure you want to delete this car? This action cannot be undone and will remove it from the marketplace."
+                confirmLabel="Delete car"
+                onConfirm={deleteCar}
+                onCancel={() => setDeleteId(null)}
+                busy={deleting}
+            />
         </div>
     )
 }
