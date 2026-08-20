@@ -13,7 +13,7 @@ const cookieOptions = {
 
 export const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, role = 'user' } = req.body
 
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -27,6 +27,10 @@ export const register = async (req, res) => {
                 success: false,
                 message: 'Password must be at least 6 characters'
             })
+        }
+
+        if (!['user', 'owner'].includes(role)) {
+            return res.status(400).json({ success: false, message: 'Choose a customer or owner account' })
         }
 
         const existingUser = await User.findOne({
@@ -45,7 +49,8 @@ export const register = async (req, res) => {
         const user = await User.create({
             name,
             email: email.toLowerCase(),
-            password: hashedPassword
+            password: hashedPassword,
+            role
         })
 
         const token = generateToken(user._id)

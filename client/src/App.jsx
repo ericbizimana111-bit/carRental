@@ -20,6 +20,7 @@ import Notifications from './pages/Notifications'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Profile from './pages/Profile'
+import AdminLayout from './components/AdminLayout'
 
 const PublicLayout = () => (
   <>
@@ -57,7 +58,11 @@ const App = () => {
         <Route path="manage-cars" element={<ManageCars />} />
         <Route path="manage-bookings" element={<ManageBookings />} />
       </Route>
-      <Route path="/admin/*" element={<ProtectedRoute roles={['admin']}><Admin /></ProtectedRoute>} />
+      
+      <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
+        <Route index element={<Admin />} />
+        <Route path=":section" element={<Admin />} />
+      </Route>
     </Routes>
   )
 }

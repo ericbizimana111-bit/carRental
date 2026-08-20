@@ -15,8 +15,8 @@ const Login = () => {
         setSubmitting(true)
         setError('')
         try {
-            await login(form)
-            navigate(location.state?.from || '/')
+            const account = await login(form)
+            navigate(location.state?.from || (account.role === 'admin' ? '/admin' : account.role === 'owner' ? '/owner' : '/'))
         } catch (requestError) {
             setError(requestError.response?.data?.message || 'Unable to log in')
         } finally { setSubmitting(false) }
@@ -30,7 +30,7 @@ const Login = () => {
             <input required type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border rounded-md p-3 text-sm outline-none" />
             {error && <p className="text-xs text-red-500">{error}</p>}
             <button disabled={submitting} className="w-full bg-primary disabled:bg-gray-300 text-white rounded-md py-3 text-sm">{submitting ? 'Logging in...' : 'Log in'}</button>
-            <p className="text-xs text-gray-500 text-center">New here? <Link to="/signup" className="text-primary">Create an account</Link></p>
+            <p className="text-xs text-gray-500 text-center">New here? <Link to="/signup" state={{ from: location.state?.from }} className="text-primary">Create an account</Link></p>
             <Link to="/forgot-password" className="block text-center text-xs text-primary">Forgot password?</Link>
         </form>
     </div>

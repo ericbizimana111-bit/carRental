@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { assets } from '../../assets/assets'
 import api from '../../services/api'
+import { compressImage } from '../../utils/imageUpload'
 
 const AddCar = () => {
     const [image, setImage] = useState(null)
@@ -17,9 +18,7 @@ const AddCar = () => {
             let imageUrl = ''
             if (image) {
                 imageUrl = await new Promise(resolve => {
-                    const reader = new FileReader()
-                    reader.onload = () => resolve(reader.result)
-                    reader.readAsDataURL(image)
+                    compressImage(image).then(resolve).catch(() => resolve(''))
                 })
             }
             await api.post('/cars', { ...form, image: imageUrl || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80' })

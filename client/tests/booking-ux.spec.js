@@ -215,6 +215,24 @@ test.describe('Admin protection', () => {
         await page.goto('/admin')
         await expect(page.getByText('Admin Console')).toBeVisible()
     })
+
+    test('admin can update a user role from the dashboard', async ({ page, request }) => {
+        const roleEmail = `admin-role-${Date.now()}@test.local`
+        const registerResponse = await request.post(`${apiBase}/auth/register`, { data: { name: 'Admin Role User', email: roleEmail, password: userPassword } })
+        expect(registerResponse.status()).toBe(201)
+        const { user: { id: userId } } = await registerResponse.json()
+
+        await loginThroughUi(page, adminEmail, ownerPassword)
+        await page.goto('/admin/users')
+
+        const userRow = page.locator('[data-testid="admin-user-row"]', { hasText: 'Admin Role User' })
+        await expect(userRow).toBeVisible({ timeout: 10000 })
+        await userRow.locator('select').selectOption('owner')
+        await userRow.getByRole('button', { name: 'Save role' }).click()
+        await expect(userRow).toContainText('Owner')
+
+        await request.delete(`${apiBase}/admin/users/${userId}`)
+    })
 })
 
 test.describe('Logout flow', () => {
