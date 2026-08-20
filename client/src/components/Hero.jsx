@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { assets, cityList } from '../assets/assets'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 const Hero = () => {
 
 
     const [pickupLocation, setPickupLocation] = useState('')
+    const navigate = useNavigate()
 
 
 
     return (
-        <div className='h-screen flex flex-col items-center justify-center gap-14 bg-light text-center'>
+        <div className='min-h-[calc(100vh-72px)] flex flex-col items-center justify-center gap-8 bg-light px-6 py-14 text-center'>
             {/* | Class           | What it does                                    | Technical meaning                                                       |
                 | --------------- | ----------------------------------------------- | ----------------------------------------------------------------------- |
                 | `text-4xl`      | Sets large text size (default)                  | Applies a font-size of **~2.25rem (36px)** and appropriate line-height  |
@@ -20,7 +22,7 @@ const Hero = () => {
 
             <h1 className='text-4xl md:text-5xl font-semibold  '>Luxury Cars On Rent</h1>
 
-            <form className='flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-lg  md:rounded-full w-full max-w-80
+            <form onSubmit={event => { event.preventDefault(); navigate('/cars') }} className='flex flex-col md:flex-row items-start md:items-center justify-between p-6 rounded-lg  md:rounded-full w-full max-w-80
              md:max-w-200 bg-white shadow-[0px_8px_20px_rgba(0,0,0,0.1)]'>
                 <div className='flex flex-col items-start gap-2'>
                     <select className='outline-none' name="legion" id="location" required value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)}>
@@ -64,7 +66,11 @@ const Hero = () => {
 
             </form>
 
-            <img src={assets.main_car} alt="maincar" className='max-h-74' />
+            <img src={assets.main_car} alt="maincar" className='max-h-74 w-full max-w-3xl object-contain' />
+            <div className="flex flex-wrap justify-center gap-3">
+                <Link to="/cars" className="rounded-full bg-blue-600 px-7 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700">Browse Cars</Link>
+                <Link to="/owner/add-car" className="rounded-full border border-blue-600 bg-white px-7 py-3 text-sm font-medium text-blue-600 transition hover:bg-blue-50">List Your Car</Link>
+            </div>
 
         </div>
     )

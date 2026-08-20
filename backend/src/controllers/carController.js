@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import Car from '../models/Car.js'
+import Review from '../models/Review.js'
 
 const isValidId = id => mongoose.Types.ObjectId.isValid(id)
 const getCarPayload = body => ({
@@ -38,7 +39,13 @@ export const getCars = async (req, res) => {
             Car.find(filters).populate('owner', 'name email image').sort(sortValue).skip((safePage - 1) * safeLimit).limit(safeLimit),
             Car.countDocuments(filters)
         ])
-        res.json({ success: true, data: cars, pagination: { page: safePage, limit: safeLimit, total, pages: Math.ceil(total / safeLimit) } })
+        const ratings = await Review.aggregate([
+            { $match: { car: { $in: cars.map(car => car._id) } } },
+            { $group: { _id: '$car', rating: { $avg: '$rating' }, count: { $sum: 1 } } }
+        ])
+        const ratingByCar = new Map(ratings.map(item => [item._id.toString(), { rating: Number(item.rating.toFixed(1)), count: item.count }]))
+        const data = cars.map(car => ({ ...car.toObject(), rating: ratingByCar.get(car._id.toString())?.rating || 0, ratingCount: ratingByCar.get(car._id.toString())?.count || 0 }))
+        res.json({ success: true, data, pagination: { page: safePage, limit: safeLimit, total, pages: Math.ceil(total / safeLimit) } })
     } catch (error) { sendError(res, error) }
 }
 

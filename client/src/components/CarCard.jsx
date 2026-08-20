@@ -33,11 +33,15 @@ const CarCard = ({ car }) => {
                     {car.brand} {car.model}
                 </h3>
 
-                <p className="text-[10px] text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-500 mt-1">
                     {car.category} {car.year}
                 </p>
+                <div className="mt-2 flex items-center justify-between text-xs">
+                    <span className="text-gray-500">Listed by {car.owner?.name || 'Car owner'}</span>
+                    <span className="font-medium text-amber-600">{car.rating ? `${car.rating}/5` : 'New'}</span>
+                </div>
 
-                <div className="grid grid-cols-2 gap-y-2 mt-3 text-[10px] text-gray-500">
+                <div className="grid grid-cols-2 gap-y-2 mt-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1.5">
                         <img src={assets.users_icon} className="w-3 h-3" alt="" />
                         {car.seating_capacity} Seats
