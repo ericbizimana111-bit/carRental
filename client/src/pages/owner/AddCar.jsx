@@ -8,6 +8,7 @@ const AddCar = () => {
     const { id } = useParams()
     const navigate = useNavigate()
     const [image, setImage] = useState(null)
+    const [currentImage, setCurrentImage] = useState('')
     const [form, setForm] = useState({ brand: '', model: '', year: '', pricePerDay: '', category: 'Sedan', transmission: 'Automatic', fuel_type: 'Gasoline', seating_capacity: '', location: '', description: '' })
     const [submitting, setSubmitting] = useState(false)
     const [message, setMessage] = useState('')
@@ -16,6 +17,7 @@ const AddCar = () => {
         if (!id) return
         api.get(`/cars/${id}`).then(response => {
             const car = response.data.data
+            setCurrentImage(car.image)
             setForm({ brand: car.brand, model: car.model, year: car.year, pricePerDay: car.pricePerDay, category: car.category, transmission: car.transmission, fuel_type: car.fuel_type, seating_capacity: car.seating_capacity, location: car.location, description: car.description })
         }).catch(error => setMessage(error.response?.data?.message || 'Unable to load car'))
     }, [id])
@@ -32,7 +34,7 @@ const AddCar = () => {
                     compressImage(image).then(resolve).catch(() => resolve(''))
                 })
             }
-            const payload = { ...form, image: imageUrl || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80' }
+            const payload = { ...form, image: imageUrl || currentImage || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80' }
             await (id ? api.put(`/cars/${id}`, payload) : api.post('/cars', payload))
             setMessage(id ? 'Car updated successfully' : 'Car listed successfully')
             if (id) setTimeout(() => navigate('/owner/manage-cars'), 500)
@@ -67,7 +69,7 @@ const AddCar = () => {
                             className="h-28 w-full object-contain"
                             alt=""
                         />
-                    ) : id ? <p className="text-xs text-gray-500">Choose a new photo to replace the current one</p> : (
+                    ) : currentImage ? <img src={currentImage} className="h-28 w-full object-contain" alt="Current car" /> : (
                         <>
                             <img src={assets.upload_icon} className="w-7" alt="" />
                             <span className="text-[10px] text-gray-500 mt-2">
