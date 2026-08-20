@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
+import AuthShell from '../components/AuthShell'
 
 const Login = () => {
     const { login } = useAuth()
@@ -22,8 +23,8 @@ const Login = () => {
         } finally { setSubmitting(false) }
     }
 
-    return <div className="min-h-[60vh] flex items-center justify-center px-6 py-14">
-        <form onSubmit={submit} className="w-full max-w-md border border-gray-100 rounded-lg shadow-sm p-6 space-y-4">
+    return <AuthShell mode="signin">
+        <form onSubmit={submit} className="space-y-5">
             <h1 className="text-2xl font-semibold">Welcome back</h1>
             <p className="text-xs text-gray-500">Log in to manage bookings and reservations.</p>
             <input required type="email" placeholder="Email address" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border rounded-md p-3 text-sm outline-none" />
@@ -33,7 +34,8 @@ const Login = () => {
             <p className="text-xs text-gray-500 text-center">New here? <Link to="/signup" state={{ from: location.state?.from }} className="text-primary">Create an account</Link></p>
             <Link to="/forgot-password" className="block text-center text-xs text-primary">Forgot password?</Link>
         </form>
-    </div>
+        </form>
+    </AuthShell>
 }
 
 export default Login

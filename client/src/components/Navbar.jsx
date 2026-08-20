@@ -24,7 +24,7 @@ const Navbar = () => {
         ? [{ name: 'Admin', path: '/admin' }]
         : isOwner
             ? [{ name: 'Browse cars', path: '/cars' }, { name: 'Dashboard', path: '/owner' }, { name: 'My cars', path: '/owner/manage-cars' }, { name: 'Bookings', path: '/owner/manage-bookings' }]
-            : [{ name: 'Browse cars', path: '/cars' }, ...(user ? [{ name: 'My bookings', path: '/my-bookings' }] : [])]
+            : user ? [{ name: 'Browse cars', path: '/cars' }, { name: 'My bookings', path: '/my-bookings' }] : [{ name: 'Home', path: '/' }, { name: 'About Us', path: '/#about' }, { name: 'Contact Us', path: '/#contact' }, { name: 'Browse Cars', path: '/cars' }]
 
     return <header className={`relative z-20 border-b border-slate-200 ${location.pathname === '/' ? 'bg-[#f1f5f9]' : 'bg-white'}`}>
         <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-6 px-5 sm:px-8 lg:px-10">
@@ -33,7 +33,7 @@ const Navbar = () => {
             <div className={`${open ? 'flex' : 'hidden'} absolute left-0 right-0 top-full flex-col gap-5 border-b border-slate-200 bg-white p-5 shadow-lg sm:static sm:flex sm:flex-row sm:items-center sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none`}>
                 <nav className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-7">
                     {links.map(link => <Link key={link.path} to={link.path} onClick={closeMenu} className={`text-sm transition-colors ${location.pathname === link.path ? 'font-medium text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>{link.name}</Link>)}
-                    {!user && <Link to="/owner/add-car" onClick={closeMenu} className="text-sm text-slate-600 transition-colors hover:text-blue-600">List your car</Link>}
+                    {!user && <Link to="/owner/add-car" onClick={closeMenu} className="text-sm text-slate-600 transition-colors hover:text-blue-600">List Your Car</Link>}
                 </nav>
                 <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:border-0 sm:pt-0">
                     {!loading && user ? <>
