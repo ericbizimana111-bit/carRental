@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { assets } from '../../assets/assets'
 import api from '../../services/api'
+import { Link } from 'react-router-dom'
+import ConfirmModal from '../../components/ConfirmModal'
 
 const ManageCars = () => {
     const currency = import.meta.env.VITE_CURRENCY
     const [cars, setCars] = useState([])
     const [message, setMessage] = useState('')
+    const [deleteId, setDeleteId] = useState(null)
+    const [deleting, setDeleting] = useState(false)
 
     const loadCars = async () => {
         try {
@@ -29,12 +33,15 @@ const ManageCars = () => {
         } catch (error) { setMessage(error.response?.data?.message || 'Unable to update car') }
     }
 
-    const deleteCar = async id => {
-        if (!window.confirm('Delete this car from the platform?')) return
+    const deleteCar = async () => {
+        if (!deleteId) return
+        setDeleting(true)
         try {
-            await api.delete(`/cars/${id}`)
+            await api.delete(`/cars/${deleteId}`)
+            setDeleteId(null)
             loadCars()
         } catch (error) { setMessage(error.response?.data?.message || 'Unable to delete car') }
+        finally { setDeleting(false) }
     }
 
     return (
@@ -90,13 +97,15 @@ const ManageCars = () => {
                             <button onClick={() => toggleAvailability(car)} className="hover:opacity-60" title="Toggle availability">
                                 <img src={assets.eye_icon} className="w-4" alt="" />
                             </button>
-                            <button onClick={() => deleteCar(car._id)} className="hover:opacity-60" title="Delete car">
+                            <Link to={`/owner/edit-car/${car._id}`} className="rounded border border-slate-200 px-2 py-1 text-[10px] text-blue-600">Edit</Link>
+                            <button onClick={() => setDeleteId(car._id)} className="hover:opacity-60" title="Delete car">
                                 <img src={assets.delete_icon} className="w-4" alt="" />
                             </button>
                         </div>
                     </div>
                 ))}
             </div>
+            <ConfirmModal open={Boolean(deleteId)} title="Delete this car?" message="Are you sure you want to delete this car? This action cannot be undone." confirmLabel="Delete car" onConfirm={deleteCar} onCancel={() => setDeleteId(null)} busy={deleting} />
         </div>
     )
 }

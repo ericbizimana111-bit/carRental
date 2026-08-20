@@ -1,13 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { assets } from '../../assets/assets'
 import api from '../../services/api'
 import { compressImage } from '../../utils/imageUpload'
 
 const AddCar = () => {
+    const { id } = useParams()
+    const navigate = useNavigate()
     const [image, setImage] = useState(null)
     const [form, setForm] = useState({ brand: '', model: '', year: '', pricePerDay: '', category: 'Sedan', transmission: 'Automatic', fuel_type: 'Gasoline', seating_capacity: '', location: '', description: '' })
     const [submitting, setSubmitting] = useState(false)
     const [message, setMessage] = useState('')
+
+    useEffect(() => {
+        if (!id) return
+        api.get(`/cars/${id}`).then(response => {
+            const car = response.data.data
+            setForm({ brand: car.brand, model: car.model, year: car.year, pricePerDay: car.pricePerDay, category: car.category, transmission: car.transmission, fuel_type: car.fuel_type, seating_capacity: car.seating_capacity, location: car.location, description: car.description })
+        }).catch(error => setMessage(error.response?.data?.message || 'Unable to load car'))
+    }, [id])
 
     const updateField = event => setForm({ ...form, [event.target.name]: event.target.value })
     const handleSubmit = async event => {
@@ -21,8 +32,10 @@ const AddCar = () => {
                     compressImage(image).then(resolve).catch(() => resolve(''))
                 })
             }
-            await api.post('/cars', { ...form, image: imageUrl || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80' })
-            setMessage('Car listed successfully')
+            const payload = { ...form, image: imageUrl || 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80' }
+            await (id ? api.put(`/cars/${id}`, payload) : api.post('/cars', payload))
+            setMessage(id ? 'Car updated successfully' : 'Car listed successfully')
+            if (id) setTimeout(() => navigate('/owner/manage-cars'), 500)
             setForm({ brand: '', model: '', year: '', pricePerDay: '', category: 'Sedan', transmission: 'Automatic', fuel_type: 'Gasoline', seating_capacity: '', location: '', description: '' })
             setImage(null)
         } catch (error) {
@@ -34,7 +47,7 @@ const AddCar = () => {
 
     return (
         <div className="p-6 md:p-8 max-w-5xl">
-            <h1 className="text-2xl font-semibold">Add New Car</h1>
+            <h1 className="text-2xl font-semibold">{id ? 'Edit Car' : 'Add New Car'}</h1>
             <p className="text-xs text-gray-500 mt-1">
                 Fill in details to list a new car for booking, including pricing, availability, and car specifications.
             </p>
@@ -54,7 +67,7 @@ const AddCar = () => {
                             className="h-28 w-full object-contain"
                             alt=""
                         />
-                    ) : (
+                    ) : id ? <p className="text-xs text-gray-500">Choose a new photo to replace the current one</p> : (
                         <>
                             <img src={assets.upload_icon} className="w-7" alt="" />
                             <span className="text-[10px] text-gray-500 mt-2">
