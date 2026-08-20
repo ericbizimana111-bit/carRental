@@ -38,7 +38,7 @@ const Navbar = () => {
                 <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:border-0 sm:pt-0">
                     {!loading && user ? <>
                         {unreadNotifications > 0 && <Link to="/notifications" onClick={closeMenu} className="text-sm text-blue-600">Notifications ({unreadNotifications})</Link>}
-                        <Link to="/profile" onClick={closeMenu} className="text-sm text-slate-700">{user.name}</Link>
+                        <Link to="/profile" onClick={closeMenu} className="flex items-center gap-2 text-sm text-slate-700"><img src={user.image || assets.user_profile} alt="" className="h-9 w-9 rounded-full object-cover" /><span className="sm:hidden">{user.name}</span></Link>
                         <button type="button" onClick={() => { closeMenu(); logout() }} className="rounded-md border border-slate-200 px-4 py-2 text-sm text-slate-600 transition-colors hover:border-blue-200 hover:text-blue-600">Logout</button>
                     </> : <button type="button" onClick={() => { closeMenu(); navigate('/login') }} className="rounded-md bg-blue-600 px-5 py-2 text-center text-sm text-white transition-colors hover:bg-blue-700">Login</button>}
                 </div>

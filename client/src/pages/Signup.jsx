@@ -36,7 +36,6 @@ const Signup = () => {
             <button disabled={submitting} className="w-full bg-primary disabled:bg-gray-300 text-white rounded-md py-3 text-sm">{submitting ? 'Creating account...' : 'Create account'}</button>
             <p className="text-xs text-gray-500 text-center">Already registered? <Link to="/login" className="text-primary">Log in</Link></p>
         </form>
-        </form>
     </AuthShell>
 }
 

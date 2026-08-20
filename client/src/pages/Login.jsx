@@ -34,7 +34,6 @@ const Login = () => {
             <p className="text-xs text-gray-500 text-center">New here? <Link to="/signup" state={{ from: location.state?.from }} className="text-primary">Create an account</Link></p>
             <Link to="/forgot-password" className="block text-center text-xs text-primary">Forgot password?</Link>
         </form>
-        </form>
     </AuthShell>
 }
 
