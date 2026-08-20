@@ -130,7 +130,7 @@ const MyBookings = () => {
       <ConfirmModal
         open={Boolean(cancelId)}
         title="Cancel this booking?"
-        message="Are you sure you want to cancel this booking? This may release the vehicle for another renter."
+        message="Are you sure you want to cancel this booking?"
         confirmLabel="Cancel booking"
         onConfirm={cancelBooking}
         onCancel={() => setCancelId(null)}

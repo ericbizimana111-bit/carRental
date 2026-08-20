@@ -66,7 +66,7 @@ const ManageCars = () => {
             <ConfirmModal
                 open={Boolean(deleteId)}
                 title="Delete this car?"
-                message="Are you sure you want to delete this car? This action cannot be undone and will remove it from the marketplace."
+                message="Are you sure you want to delete this car?"
                 confirmLabel="Delete car"
                 onConfirm={deleteCar}
                 onCancel={() => setDeleteId(null)}

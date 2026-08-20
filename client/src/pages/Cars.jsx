@@ -51,7 +51,7 @@ const Cars = () => {
               onChange={e => setSearch(e.target.value)}
               type="text"
               placeholder="Search by make, model, or features"
-              className="w-full ml-2 outline-none text-xs text-gray-600"
+              className="w-full ml-2 outline-none text-sm text-gray-600"
             />
             <img src={assets.filter_icon} alt="" className="w-4 h-4 cursor-pointer" />
           </div>
@@ -60,20 +60,20 @@ const Cars = () => {
 
       <section className="max-w-6xl mx-auto px-6 md:px-10 py-8">
         <div className="flex items-center justify-between mb-5">
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             {loading ? 'Loading cars...' : `Showing ${cars.length} Cars`}
           </p>
 
           <select
             value={category}
             onChange={e => setCategory(e.target.value)}
-            className="border border-gray-200 rounded-md px-3 py-1.5 text-xs outline-none"
+            className="input-field !w-auto !py-1.5"
           >
             {categories.map(item => (
               <option key={item}>{item}</option>
             ))}
           </select>
-          <select value={sort} onChange={e => setSort(e.target.value)} className="border border-gray-200 rounded-md px-3 py-1.5 text-xs outline-none">
+          <select value={sort} onChange={e => setSort(e.target.value)} className="input-field !w-auto !py-1.5">
             <option value="newest">Newest</option>
             <option value="priceAsc">Price: low to high</option>
             <option value="priceDesc">Price: high to low</option>

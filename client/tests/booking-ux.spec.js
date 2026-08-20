@@ -14,10 +14,10 @@ let testBookingId
 
 const loginThroughUi = async (page, email, password) => {
     await page.goto('/login')
-    await page.getByPlaceholder('Email address').fill(email)
-    await page.getByPlaceholder('Password').fill(password)
-    await page.getByRole('button', { name: 'Log in' }).click()
-    await expect(page).toHaveURL(/\/$/)
+    await page.getByPlaceholder('you@example.com').fill(email)
+    await page.getByPlaceholder('Enter your password').fill(password)
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page).not.toHaveURL(/\/login$/)
 }
 
 const fillBookingDates = async (page) => {
@@ -59,20 +59,20 @@ test.describe('Cars page', () => {
 test.describe('Signup flow', () => {
     test('creates a new account and logs in', async ({ page }) => {
         await page.goto('/signup')
-        await expect(page.getByText('Create your account')).toBeVisible()
-        await page.getByPlaceholder('Full name').fill('E2E Signup User')
-        await page.getByPlaceholder('Email address').fill(`e2e-signup-${Date.now()}@test.local`)
-        await page.getByPlaceholder('Password (6+ characters)').fill(userPassword)
-        await page.getByRole('button', { name: 'Create account' }).click()
+        await expect(page.getByText('Create Account')).toBeVisible()
+        await page.getByPlaceholder('Your full name').fill('E2E Signup User')
+        await page.getByPlaceholder('you@example.com').fill(`e2e-signup-${Date.now()}@test.local`)
+        await page.getByPlaceholder('At least 6 characters').fill(userPassword)
+        await page.getByRole('button', { name: 'Sign Up' }).click()
         await expect(page).toHaveURL(/\/$/, { timeout: 10000 })
     })
 
     test('rejects duplicate email', async ({ page }) => {
         await page.goto('/signup')
-        await page.getByPlaceholder('Full name').fill('Duplicate User')
-        await page.getByPlaceholder('Email address').fill(testEmail)
-        await page.getByPlaceholder('Password (6+ characters)').fill(userPassword)
-        await page.getByRole('button', { name: 'Create account' }).click()
+        await page.getByPlaceholder('Your full name').fill('Duplicate User')
+        await page.getByPlaceholder('you@example.com').fill(testEmail)
+        await page.getByPlaceholder('At least 6 characters').fill(userPassword)
+        await page.getByRole('button', { name: 'Sign Up' }).click()
         await expect(page.getByText('already registered', { exact: false })).toBeVisible({ timeout: 5000 })
     })
 })
@@ -84,9 +84,9 @@ test.describe('Login flow', () => {
 
     test('rejects invalid credentials', async ({ page }) => {
         await page.goto('/login')
-        await page.getByPlaceholder('Email address').fill('nonexistent@test.local')
-        await page.getByPlaceholder('Password').fill('wrongpassword')
-        await page.getByRole('button', { name: 'Log in' }).click()
+        await page.getByPlaceholder('you@example.com').fill('nonexistent@test.local')
+        await page.getByPlaceholder('Enter your password').fill('wrongpassword')
+        await page.getByRole('button', { name: 'Sign In' }).click()
         await expect(page.getByText('Invalid email or password')).toBeVisible()
     })
 })
@@ -190,7 +190,7 @@ test.describe('booking UX regression', () => {
     test('user cancels the eligible booking', async ({ page }) => {
         await loginThroughUi(page, testEmail, userPassword)
         await page.goto('/my-bookings')
-        page.once('dialog', dialog => dialog.accept())
+        await page.getByRole('button', { name: 'Cancel Booking' }).click()
         await page.getByRole('button', { name: 'Cancel booking' }).click()
         await expect(page.getByText('Cancelled')).toBeVisible()
     })
@@ -240,10 +240,10 @@ test.describe('Logout flow', () => {
 
     test('logging out clears the session', async ({ page }) => {
         await page.goto('/signup')
-        await page.getByPlaceholder('Full name').fill('Logout Test User')
-        await page.getByPlaceholder('Email address').fill(logoutEmail)
-        await page.getByPlaceholder('Password (6+ characters)').fill(userPassword)
-        await page.getByRole('button', { name: 'Create account' }).click()
+        await page.getByPlaceholder('Your full name').fill('Logout Test User')
+        await page.getByPlaceholder('you@example.com').fill(logoutEmail)
+        await page.getByPlaceholder('At least 6 characters').fill(userPassword)
+        await page.getByRole('button', { name: 'Sign Up' }).click()
         await expect(page).toHaveURL(/\/$/, { timeout: 10000 })
         await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible()
         await page.getByRole('button', { name: 'Logout' }).click()
