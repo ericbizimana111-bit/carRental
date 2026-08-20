@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
 import StatusBadge from '../components/StatusBadge'
 import api from '../services/api'
+import ConfirmModal from '../components/ConfirmModal'
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY
@@ -9,6 +10,7 @@ const MyBookings = () => {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [cancellingId, setCancellingId] = useState(null)
+  const [cancelId, setCancelId] = useState(null)
 
   const loadBookings = async () => {
     try {
@@ -21,12 +23,14 @@ const MyBookings = () => {
 
   useEffect(() => { loadBookings() }, [])
 
-  const cancelBooking = async id => {
-    if (!window.confirm('Cancel this booking?')) return
+  const cancelBooking = async () => {
+    if (!cancelId) return
+    const id = cancelId
     setCancellingId(id)
     setMessage('')
     try {
       await api.delete(`/bookings/${id}`)
+      setCancelId(null)
       setBookings(current => current.map(booking => booking._id === id ? { ...booking, status: 'cancelled' } : booking))
     } catch (error) { setMessage(error.response?.data?.message || 'Unable to cancel booking') } finally { setCancellingId(null) }
   }
@@ -98,12 +102,13 @@ const MyBookings = () => {
               <p className="text-lg font-semibold text-blue-600">
                 {currency}{booking.totalPrice}
               </p>
-              {['pending', 'confirmed'].includes(booking.status) && <button disabled={cancellingId === booking._id} onClick={() => cancelBooking(booking._id)} className="text-[10px] text-red-500 disabled:text-gray-300 mt-2">{cancellingId === booking._id ? 'Cancelling...' : 'Cancel booking'}</button>}
+              {['pending', 'confirmed'].includes(booking.status) && <button disabled={cancellingId === booking._id} onClick={() => setCancelId(booking._id)} className="mt-3 rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 disabled:text-gray-300">{cancellingId === booking._id ? 'Cancelling...' : 'Cancel booking'}</button>}
               <p className="text-[10px] text-gray-500 mt-2">Rental days: {Math.max(Math.ceil((new Date(booking.returnDate) - new Date(booking.pickupDate)) / 86400000), 1)}</p>
             </div>
           </div>
         ))}
       </div>
+      <ConfirmModal open={Boolean(cancelId)} title="Cancel this booking?" message="Are you sure you want to cancel this booking? This may release the vehicle for another renter." confirmLabel="Cancel booking" onConfirm={cancelBooking} onCancel={() => setCancelId(null)} busy={Boolean(cancellingId)} />
     </div>
   )
 }
