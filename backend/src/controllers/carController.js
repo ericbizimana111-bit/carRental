@@ -9,7 +9,7 @@ const getCarPayload = body => ({
     fuel_type: body.fuel_type, transmission: body.transmission,
     pricePerDay: body.pricePerDay, location: body.location,
     description: body.description, isAvailable: body.isAvailable,
-    documentation: body.documentation
+    documentation: body.documentation, featured: body.featured
 })
 
 const sendError = (res, error) => res.status(error.name === 'ValidationError' ? 400 : 500).json({
@@ -19,7 +19,7 @@ const sendError = (res, error) => res.status(error.name === 'ValidationError' ? 
 
 export const getCars = async (req, res) => {
     try {
-        const { search, location, category, transmission, fuel_type, seating_capacity, minPrice, maxPrice, isAvailable, sort = '-createdAt', page = 1, limit = 12 } = req.query
+        const { search, location, category, transmission, fuel_type, seating_capacity, minPrice, maxPrice, isAvailable, featured, sort = '-createdAt', page = 1, limit = 12 } = req.query
         const filters = { listingStatus: 'live' }
         if (search) {
             const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -32,6 +32,7 @@ export const getCars = async (req, res) => {
         if (fuel_type && fuel_type !== 'All') filters.fuel_type = fuel_type
         if (seating_capacity) filters.seating_capacity = { $gte: Number(seating_capacity) }
         if (isAvailable !== undefined) filters.isAvailable = isAvailable === 'true'
+        if (featured !== undefined) filters.featured = featured === 'true'
         if (minPrice || maxPrice) filters.pricePerDay = { ...(minPrice && { $gte: Number(minPrice) }), ...(maxPrice && { $lte: Number(maxPrice) }) }
 
         const safePage = Math.max(Number(page) || 1, 1)
@@ -60,7 +61,7 @@ export const getCar = async (req, res) => {
 
 export const createCar = async (req, res) => {
     try {
-        const car = await Car.create({ ...getCarPayload(req.body), owner: req.user._id, listingStatus: 'pending' })
+        const car = await Car.create({ ...getCarPayload(req.body), owner: req.user._id, listingStatus: 'live' })
         res.status(201).json({ success: true, data: await car.populate('owner', 'name email image') })
     } catch (error) { sendError(res, error) }
 }

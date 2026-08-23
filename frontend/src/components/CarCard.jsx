@@ -38,11 +38,11 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                     {car.brand} {car.model}
                 </h3>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-base text-slate-500">
                     {car.category} · {car.year}
                 </p>
 
-                <div className="mt-3 flex items-center justify-between text-sm">
+                <div className="mt-3 flex items-center justify-between text-base">
                     <span className="flex items-center gap-1.5 text-slate-500">
                         <img src={assets.user_profile} alt="" className="h-4 w-4 rounded-full object-cover opacity-70" />
                         {car.owner?.name || 'Car owner'}
@@ -53,7 +53,7 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                     </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-y-2.5 text-sm text-slate-500">
+                <div className="mt-4 grid grid-cols-2 gap-y-2.5 text-base text-slate-500">
                     <div className="flex items-center gap-2">
                         <img src={assets.users_icon} className="h-4 w-4 opacity-70" alt="" />
                         {car.seating_capacity} Seats
@@ -76,17 +76,15 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                     <div className="mt-5 flex gap-2 border-t border-slate-100 pt-4" onClick={stopPropagation}>
                         <Link
                             to={`/owner/edit-car/${car._id}`}
-                            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-primary transition hover:border-primary/30 hover:bg-blue-50"
+                            className="inline-flex flex-1 items-center justify-center rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-primary transition hover:border-primary/30 hover:bg-blue-50"
                         >
-                            <img src={assets.edit_icon} alt="" className="h-4 w-4" />
                             Edit
                         </Link>
                         <button
                             type="button"
                             onClick={() => onDelete?.(car._id)}
-                            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-red-100 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                            className="inline-flex flex-1 items-center justify-center rounded-lg border border-red-100 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                         >
-                            <img src={assets.delete_icon} alt="" className="h-4 w-4" />
                             Delete
                         </button>
                     </div>

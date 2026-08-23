@@ -15,6 +15,7 @@ const Admin = () => {
     const [bookingSearch, setBookingSearch] = useState('')
     const [ownerFilter, setOwnerFilter] = useState('')
     const [ownerOptions, setOwnerOptions] = useState([])
+    const [featuredLoading, setFeaturedLoading] = useState(null)
 
     useEffect(() => {
         if (section === 'bookings') {
@@ -140,12 +141,31 @@ const Admin = () => {
                         {items.length === 0 ? (
                             <p className="card p-6 text-sm text-slate-500">No cars found.</p>
                         ) : items.map(car => (
-                            <div key={car._id} className="card flex items-center gap-4 p-4">
-                                <img src={car.image} className="h-14 w-24 rounded-lg object-cover" alt={`${car.brand} ${car.model}`} />
-                                <div>
-                                    <p className="text-sm font-medium text-slate-900">{car.brand} {car.model}</p>
-                                    <p className="mt-1 text-sm text-slate-500">Owner: {car.owner?.name || 'Unknown'}</p>
+                            <div key={car._id} className="card flex items-center justify-between gap-4 p-4">
+                                <div className="flex items-center gap-4">
+                                    <img src={car.image} className="h-14 w-24 rounded-lg object-cover" alt={`${car.brand} ${car.model}`} />
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-900">{car.brand} {car.model}</p>
+                                        <p className="mt-1 text-sm text-slate-500">Owner: {car.owner?.name || 'Unknown'}</p>
+                                    </div>
                                 </div>
+                                <button
+                                    disabled={featuredLoading === car._id}
+                                    onClick={async () => {
+                                        setFeaturedLoading(car._id)
+                                        try {
+                                            const response = await api.patch(`/admin/cars/${car._id}/featured`)
+                                            setItems(current => current.map(c => c._id === car._id ? response.data.data : c))
+                                        } catch (requestError) {
+                                            setError(requestError.response?.data?.message || 'Unable to toggle featured')
+                                        } finally {
+                                            setFeaturedLoading(null)
+                                        }
+                                    }}
+                                    className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${car.featured ? 'border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100' : 'border-slate-200 text-slate-500 hover:border-yellow-300 hover:text-yellow-600'}`}
+                                >
+                                    {car.featured ? '\u2605 Featured' : '\u2606 Feature'}
+                                </button>
                             </div>
                         ))}
                     </div>

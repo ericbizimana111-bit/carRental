@@ -68,18 +68,23 @@ const Navbar = () => {
 
     return (
         <header className={`relative z-20 border-b border-slate-200 ${location.pathname === '/' ? 'bg-light' : 'bg-white'}`}>
-            <div className="mx-auto grid min-h-[72px] max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 sm:px-8 lg:px-10">
-                {/* Left zone */}
+            <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+                {/* Left zone — Logo */}
+                <Link to="/" onClick={closeMenu} className="shrink-0">
+                    <img src={assets.logo} alt="CarRental home" className="h-8" />
+                </Link>
+
+                {/* Center zone — nav links */}
+                <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
+                    {centerLinks.map(link => (
+                        <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={closeMenu}>
+                            {link.name}
+                        </NavLink>
+                    ))}
+                </nav>
+
+                {/* Right zone — profile + login/logout + hamburger */}
                 <div className="flex items-center gap-3">
-                    {isGuest && (
-                        <button
-                            type="button"
-                            onClick={() => { closeMenu(); navigate('/login') }}
-                            className="hidden rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dull sm:inline-flex"
-                        >
-                            Login
-                        </button>
-                    )}
                     {isOwner && user && (
                         <Link to="/profile" onClick={closeMenu} className="hidden sm:block" title="View profile">
                             <img
@@ -98,24 +103,15 @@ const Navbar = () => {
                             />
                         </Link>
                     )}
-                </div>
-
-                {/* Center zone — logo + nav links */}
-                <div className="flex items-center justify-center gap-6 lg:gap-10">
-                    <Link to="/" onClick={closeMenu} className="shrink-0">
-                        <img src={assets.logo} alt="CarRental home" className="h-8" />
-                    </Link>
-                    <nav className="hidden items-center gap-6 lg:flex">
-                        {centerLinks.map(link => (
-                            <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={closeMenu}>
-                                {link.name}
-                            </NavLink>
-                        ))}
-                    </nav>
-                </div>
-
-                {/* Right zone */}
-                <div className="flex items-center justify-end gap-3">
+                    {isGuest && (
+                        <button
+                            type="button"
+                            onClick={() => { closeMenu(); navigate('/login') }}
+                            className="hidden rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dull sm:inline-flex"
+                        >
+                            Login
+                        </button>
+                    )}
                     {!loading && user && (
                         <>
                             {unreadNotifications > 0 && (

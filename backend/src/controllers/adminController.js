@@ -98,6 +98,15 @@ export const rejectCar = async (req, res) => {
     res.json({ success: true, data: car })
 }
 
+export const toggleFeatured = async (req, res) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ success: false, message: 'Invalid car ID' })
+    const car = await Car.findById(req.params.id)
+    if (!car) return res.status(404).json({ success: false, message: 'Car not found' })
+    car.featured = !car.featured
+    await car.save()
+    res.json({ success: true, data: await car.populate('owner', 'name email image') })
+}
+
 export const getAdminBookings = async (req, res) => {
     const filters = {}
     if (req.query.owner && mongoose.Types.ObjectId.isValid(req.query.owner)) {

@@ -15,6 +15,7 @@ const carSchema = new mongoose.Schema({
     description: { type: String, required: true, trim: true },
     documentation: { type: String, default: '', trim: true },
     isAvailable: { type: Boolean, default: true, index: true },
+    featured: { type: Boolean, default: false, index: true },
     listingStatus: { type: String, enum: ['pending', 'live', 'rejected'], default: 'pending', index: true },
     rejectionReason: { type: String, default: '', trim: true }
 }, { timestamps: true })
