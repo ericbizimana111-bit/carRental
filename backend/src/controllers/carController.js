@@ -8,7 +8,8 @@ const getCarPayload = body => ({
     category: body.category, seating_capacity: body.seating_capacity,
     fuel_type: body.fuel_type, transmission: body.transmission,
     pricePerDay: body.pricePerDay, location: body.location,
-    description: body.description, isAvailable: body.isAvailable
+    description: body.description, isAvailable: body.isAvailable,
+    documentation: body.documentation
 })
 
 const sendError = (res, error) => res.status(error.name === 'ValidationError' ? 400 : 500).json({
@@ -19,9 +20,9 @@ const sendError = (res, error) => res.status(error.name === 'ValidationError' ? 
 export const getCars = async (req, res) => {
     try {
         const { search, location, category, transmission, fuel_type, seating_capacity, minPrice, maxPrice, isAvailable, sort = '-createdAt', page = 1, limit = 12 } = req.query
-        const filters = {}
+        const filters = { listingStatus: 'live' }
         if (search) {
-            const expression = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+            const expression = new RegExp(search.trim().replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'i')
             filters.$or = [{ brand: expression }, { model: expression }, { location: expression }]
         }
         if (location) filters.location = new RegExp(location, 'i')
@@ -58,7 +59,7 @@ export const getCar = async (req, res) => {
 
 export const createCar = async (req, res) => {
     try {
-        const car = await Car.create({ ...getCarPayload(req.body), owner: req.user._id })
+        const car = await Car.create({ ...getCarPayload(req.body), owner: req.user._id, listingStatus: 'pending' })
         res.status(201).json({ success: true, data: await car.populate('owner', 'name email image') })
     } catch (error) { sendError(res, error) }
 }

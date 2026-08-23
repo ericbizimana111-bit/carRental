@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import StatusBadge from '../../components/StatusBadge'
+import ConfirmModal from '../../components/ConfirmModal'
 import api from '../../services/api'
 
 const ManageBookings = () => {
@@ -8,19 +9,29 @@ const ManageBookings = () => {
     const [message, setMessage] = useState('')
     const [loading, setLoading] = useState(true)
     const [updatingId, setUpdatingId] = useState(null)
+    const [confirmAction, setConfirmAction] = useState(null)
 
     useEffect(() => {
         let active = true
-        api.get('/bookings/owner').then(response => { if (active) setBookings(response.data.data || []) }).catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') }).finally(() => { if (active) setLoading(false) })
+        api.get('/bookings/owner')
+            .then(response => { if (active) setBookings(response.data.data || []) })
+            .catch(error => { if (active) setMessage(error.response?.data?.message || 'Unable to load bookings') })
+            .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
     }, [])
+
     const updateStatus = async (id, status) => {
         setUpdatingId(id)
         setMessage('')
         try {
             const response = await api.put(`/bookings/${id}/status`, { status })
             setBookings(current => current.map(booking => booking._id === id ? response.data.data : booking))
-        } catch (error) { setMessage(error.response?.data?.message || 'Unable to update booking') } finally { setUpdatingId(null) }
+        } catch (error) {
+            setMessage(error.response?.data?.message || 'Unable to update booking')
+        } finally {
+            setUpdatingId(null)
+            setConfirmAction(null)
+        }
     }
 
     return (
@@ -31,7 +42,7 @@ const ManageBookings = () => {
             </p>
 
             <div className="border rounded-lg overflow-hidden mt-7">
-                <div className="hidden md:grid grid-cols-[2fr_1.5fr_1fr_1fr_80px] px-4 py-3 border-b text-[10px] text-gray-500">
+                <div className="hidden md:grid grid-cols-[2fr_1.5fr_1fr_1fr_120px] px-4 py-3 border-b text-[10px] text-gray-500">
                     <span>Car</span>
                     <span>Date Range</span>
                     <span>Total</span>
@@ -46,7 +57,7 @@ const ManageBookings = () => {
                     <div
                         key={booking._id}
                         data-testid="booking-row"
-                        className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_80px] gap-3 md:gap-0 items-center px-4 py-3 border-b last:border-0"
+                        className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_120px] gap-3 md:gap-0 items-center px-4 py-3 border-b last:border-0"
                     >
                         <div className="flex items-center gap-3">
                             <img
@@ -55,10 +66,10 @@ const ManageBookings = () => {
                                 alt={booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Unavailable car'}
                             />
                             <div>
-                            <p className="text-xs">
-                                {booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Car no longer available'}
-                            </p>
-                            <p className="text-[9px] text-gray-400">{booking.user?.name}</p>
+                                <p className="text-xs">
+                                    {booking.car ? `${booking.car.brand} ${booking.car.model}` : 'Car no longer available'}
+                                </p>
+                                <p className="text-[9px] text-gray-400">{booking.user?.name}</p>
                             </div>
                         </div>
 
@@ -73,13 +84,60 @@ const ManageBookings = () => {
                         <StatusBadge status={booking.status} />
 
                         <div className="flex gap-2">
-                            {booking.status === 'pending' && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'confirmed')} className="border rounded px-2 py-1 text-[9px] text-blue-600 disabled:text-gray-300 w-fit">{updatingId === booking._id ? 'Updating...' : 'Confirm'}</button>}
-                            {['pending', 'confirmed'].includes(booking.status) && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'cancelled')} className="border rounded px-2 py-1 text-[9px] text-red-500 disabled:text-gray-300 w-fit">Cancel</button>}
-                            {booking.status === 'confirmed' && <button disabled={updatingId === booking._id} onClick={() => updateStatus(booking._id, 'completed')} className="border rounded px-2 py-1 text-[9px] text-green-600 disabled:text-gray-300 w-fit">Complete</button>}
+                            {booking.status === 'pending' && (
+                                <button
+                                    disabled={updatingId === booking._id}
+                                    onClick={() => setConfirmAction({ id: booking._id, status: 'confirmed' })}
+                                    className="rounded-lg bg-primary px-3 py-1.5 text-[10px] font-medium text-white disabled:opacity-50"
+                                >
+                                    Accept
+                                </button>
+                            )}
+                            {booking.status === 'pending' && (
+                                <button
+                                    disabled={updatingId === booking._id}
+                                    onClick={() => setConfirmAction({ id: booking._id, status: 'cancelled' })}
+                                    className="rounded-lg border border-red-200 px-3 py-1.5 text-[10px] font-medium text-red-600 disabled:opacity-50"
+                                >
+                                    Decline
+                                </button>
+                            )}
+                            {booking.status === 'confirmed' && (
+                                <button
+                                    disabled={updatingId === booking._id}
+                                    onClick={() => updateStatus(booking._id, 'completed')}
+                                    className="rounded-lg border border-green-200 px-3 py-1.5 text-[10px] font-medium text-green-600 disabled:opacity-50"
+                                >
+                                    Complete
+                                </button>
+                            )}
+                            {booking.status === 'confirmed' && (
+                                <button
+                                    disabled={updatingId === booking._id}
+                                    onClick={() => setConfirmAction({ id: booking._id, status: 'cancelled' })}
+                                    className="rounded-lg border border-red-200 px-3 py-1.5 text-[10px] font-medium text-red-600 disabled:opacity-50"
+                                >
+                                    Cancel
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}
             </div>
+
+            {confirmAction && (
+                <ConfirmModal
+                    open={true}
+                    title={confirmAction.status === 'confirmed' ? 'Accept this booking?' : 'Decline this booking?'}
+                    message={confirmAction.status === 'confirmed'
+                        ? 'Do you agree with this booking? The renter will be notified.'
+                        : 'Are you sure you want to decline this booking? The renter will be notified.'}
+                    confirmLabel={confirmAction.status === 'confirmed' ? 'Accept' : 'Decline'}
+                    onConfirm={() => updateStatus(confirmAction.id, confirmAction.status)}
+                    onCancel={() => setConfirmAction(null)}
+                    busy={Boolean(updatingId)}
+                />
+            )}
         </div>
     )
 }

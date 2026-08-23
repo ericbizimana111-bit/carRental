@@ -1,22 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { assets } from '../../assets/assets'
 import StatusBadge from '../../components/StatusBadge'
+import ConfirmModal from '../../components/ConfirmModal'
 import api from '../../services/api'
 
 const Dashboard = () => {
     const [data, setData] = useState({ totalCars: 0, totalBookings: 0, pendingBookings: 0, completedBookings: 0, recentBookings: [], monthlyRevenue: 0 })
     const currency = import.meta.env.VITE_CURRENCY
     const [error, setError] = useState('')
-    useEffect(() => { api.get('/bookings/owner/dashboard').then(response => setData(response.data.data)).catch(error => setError(error.response?.data?.message || 'Unable to load dashboard')) }, [])
+    const [loading, setLoading] = useState(true)
+    const [confirmAction, setConfirmAction] = useState(null)
+    const [updatingId, setUpdatingId] = useState(null)
+
+    useEffect(() => {
+        api.get('/bookings/owner/dashboard')
+            .then(response => setData(response.data.data))
+            .catch(error => setError(error.response?.data?.message || 'Unable to load dashboard'))
+            .finally(() => setLoading(false))
+    }, [])
+
+    const updateStatus = async (id, status) => {
+        setUpdatingId(id)
+        try {
+            const response = await api.put(`/bookings/${id}/status`, { status })
+            setData(prev => ({
+                ...prev,
+                recentBookings: prev.recentBookings.map(b => b._id === id ? response.data.data : b),
+                pendingBookings: status !== 'pending' ? Math.max(0, prev.pendingBookings - 1) : prev.pendingBookings,
+                completedBookings: status === 'completed' ? prev.completedBookings + 1 : prev.completedBookings,
+            }))
+        } catch (error) {
+            setError(error.response?.data?.message || 'Unable to update booking')
+        } finally {
+            setUpdatingId(null)
+            setConfirmAction(null)
+        }
+    }
 
     return (
         <div className="p-6 md:p-8 max-w-6xl">
             <h1 className="text-2xl font-semibold">
-                Admin Dashboard
+                Owner Dashboard
             </h1>
 
             <p className="text-xs text-gray-500 mt-1">
-                Monitor overall platform performance including total cars, bookings, revenue, and recent activities.
+                Monitor your vehicles, bookings, and revenue from one place.
             </p>
 
             {error && <p className="text-xs text-red-500 mt-4">{error}</p>}
@@ -57,7 +85,7 @@ const Dashboard = () => {
             <div className="grid lg:grid-cols-[1.5fr_1fr] gap-5 mt-5">
                 <div className="border rounded-lg p-5">
                     <h2 className="font-medium text-sm">Recent Bookings</h2>
-                    <p className="text-[10px] text-gray-500 mt-1">Latest customer bookings</p>
+                    <p className="text-[10px] text-gray-500 mt-1">Latest booking requests</p>
 
                     <div className="mt-5">
                         {data.recentBookings.map(booking => (
@@ -67,7 +95,7 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="flex-1">
-                                    <p className="text-xs">{booking.car.brand} {booking.car.model}</p>
+                                    <p className="text-xs">{booking.car?.brand} {booking.car?.model}</p>
                                     <p className="text-[9px] text-gray-400">
                                         {new Date(booking.pickupDate).toLocaleDateString()}
                                     </p>
@@ -88,6 +116,21 @@ const Dashboard = () => {
                     </p>
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            {confirmAction && (
+                <ConfirmModal
+                    open={true}
+                    title={confirmAction.status === 'confirmed' ? 'Accept this booking?' : 'Decline this booking?'}
+                    message={confirmAction.status === 'confirmed'
+                        ? 'Do you agree with this booking? The renter will be notified.'
+                        : 'Are you sure you want to decline this booking? The renter will be notified.'}
+                    confirmLabel={confirmAction.status === 'confirmed' ? 'Accept' : 'Decline'}
+                    onConfirm={() => updateStatus(confirmAction.id, confirmAction.status)}
+                    onCancel={() => setConfirmAction(null)}
+                    busy={Boolean(updatingId)}
+                />
+            )}
         </div>
     )
 }
