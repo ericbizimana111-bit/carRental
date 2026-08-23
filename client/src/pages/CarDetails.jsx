@@ -108,7 +108,11 @@ const CarDetails = () => {
     setReviewMessage('')
     try {
       const response = await api.post(`/reviews/${car._id}`, { rating: Number(reviewForm.rating), comment: reviewForm.comment })
-      setReviews([response.data.data, ...reviews])
+      const updatedReviews = [response.data.data, ...reviews]
+      setReviews(updatedReviews)
+      const newAvg = updatedReviews.reduce((sum, r) => sum + r.rating, 0) / updatedReviews.length
+      setRating(Number(newAvg.toFixed(1)))
+      setRatingCount(updatedReviews.length)
       setReviewMessage('Review submitted successfully')
       setReviewForm({ rating: 5, comment: '' })
     } catch (requestError) {

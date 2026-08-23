@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import Booking from '../models/Booking.js'
 import Review from '../models/Review.js'
 
 export const getCarReviews = async (req, res) => {
@@ -12,8 +11,7 @@ export const getCarReviews = async (req, res) => {
 export const createReview = async (req, res) => {
     const { rating, comment } = req.body
     if (!mongoose.Types.ObjectId.isValid(req.params.carId) || !rating || !comment?.trim()) return res.status(400).json({ success: false, message: 'Rating and comment are required' })
-    const completedBooking = await Booking.exists({ user: req.user._id, car: req.params.carId, status: 'completed' })
-    if (!completedBooking) return res.status(403).json({ success: false, message: 'Complete a booking before reviewing this car' })
+
     try {
         const review = await Review.create({ user: req.user._id, car: req.params.carId, rating, comment })
         res.status(201).json({ success: true, data: await review.populate('user', 'name image') })

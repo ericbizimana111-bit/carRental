@@ -63,7 +63,7 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                         <img src={assets.user_profile} alt='' className='h-6 w-6 rounded-full object-cover ring-2 ring-slate-100' />
                         {car.owner?.name || 'Car owner'}
                     </span>
-                    <StarRating rating={car.rating} showValue={true} />
+                    <StarRating rating={car.rating} count={car.ratingCount} showValue={true} />
                 </div>
 
                 {/* Divider */}
