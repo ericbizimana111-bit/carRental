@@ -12,7 +12,7 @@ const NewsLetter = () => {
     }
 
     return (
-        <div className='my-8 px-6 md:px-16 lg:px-24 xl:px-32'>
+        <div className='my-10 mb-40 px-6 md:px-16 lg:px-24 xl:px-32'>
             <ScrollReveal>
                 <div className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-blue-600 to-blue-700 p-10 md:p-16 shadow-2xl shadow-primary/20'>
                     {/* Decorative circles */}
