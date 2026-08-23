@@ -18,7 +18,7 @@ const Hero = () => {
             <div className='pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl' />
             <div className='pointer-events-none absolute -bottom-20 -left-20 h-[300px] w-[300px] rounded-full bg-blue-200/30 blur-3xl' />
 
-            <div className='relative mx-auto flex min-h-[calc(100vh-72px)] max-w-7xl flex-col items-center gap-8 px-6 py-14 md:flex-row md:items-center md:gap-12 lg:px-12 xl:px-16'>
+            <div className='relative mx-auto flex min-h-[calc(100vh-72px)] max-w-7xl flex-col items-center gap-8 px-6 py-14 md:flex-row md:items-start md:gap-6 lg:px-12 xl:px-16'>
 
                 {/* Left: Copy */}
                 <div className='flex flex-1 flex-col items-center text-center md:items-start md:text-left'>
@@ -86,7 +86,7 @@ const Hero = () => {
                 </div>
 
                 {/* Right: Car image */}
-                <ScrollReveal delay={250} className='flex flex-1 items-center justify-center'>
+                <ScrollReveal delay={250} className='flex flex-1 items-center justify-center pt-10'>
                     <div className='animate-[drive_4s_ease-in-out_infinite] relative'>
                         <img
                             src={assets.main_car}

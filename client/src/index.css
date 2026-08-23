@@ -83,12 +83,12 @@ h3 {
 }
 
 @keyframes drive {
-    0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); filter: blur(0px); }
-    15% { transform: translateX(8px) translateY(-2px) rotate(-0.3deg); filter: blur(0.5px); }
-    30% { transform: translateX(16px) translateY(0px) rotate(0deg); filter: blur(0px); }
-    50% { transform: translateX(20px) translateY(1px) rotate(0.3deg); filter: blur(0.5px); }
-    65% { transform: translateX(12px) translateY(0px) rotate(0deg); filter: blur(0px); }
-    85% { transform: translateX(4px) translateY(-1px) rotate(-0.2deg); filter: blur(0.5px); }
+    0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+    15% { transform: translateX(8px) translateY(-2px) rotate(-0.3deg); }
+    30% { transform: translateX(16px) translateY(0px) rotate(0deg); }
+    50% { transform: translateX(20px) translateY(1px) rotate(0.3deg); }
+    65% { transform: translateX(12px) translateY(0px) rotate(0deg); }
+    85% { transform: translateX(4px) translateY(-1px) rotate(-0.2deg); }
 }
 
 @keyframes spin-wheel {
