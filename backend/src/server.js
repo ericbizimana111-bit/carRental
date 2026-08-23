@@ -14,6 +14,7 @@ import favoriteRoutes from './routes/favoriteRoutes.js'
 import notificationRoutes from './routes/notificationRoutes.js'
 import paymentRoutes from './routes/paymentRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import contactRoutes from './routes/contactRoutes.js'
 import { errorHandler, notFound } from './middleware/errorMiddleware.js'
 
 dotenv.config()
@@ -63,6 +64,7 @@ app.use('/api/favorites', favoriteRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/contact', contactRoutes)
 
 app.use(notFound)
 app.use(errorHandler)

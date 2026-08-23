@@ -1,6 +1,7 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { Link, useNavigate } from 'react-router-dom'
+import StarRating from './StarRating'
 
 const CarCard = ({ car, ownerMode = false, onDelete }) => {
     const currency = import.meta.env.VITE_CURRENCY
@@ -47,10 +48,7 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                         <img src={assets.user_profile} alt="" className="h-4 w-4 rounded-full object-cover opacity-70" />
                         {car.owner?.name || 'Car owner'}
                     </span>
-                    <span className="flex items-center gap-1 font-medium text-amber-600">
-                        <img src={assets.star_icon} alt="" className="h-3.5 w-3.5" />
-                        {car.rating ? `${car.rating}/5` : 'New'}
-                    </span>
+                    <StarRating rating={car.rating} showValue={true} />
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-y-2.5 text-sm text-slate-500">
@@ -78,7 +76,6 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                             to={`/owner/edit-car/${car._id}`}
                             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-primary transition hover:border-primary/30 hover:bg-blue-50"
                         >
-                            <img src={assets.edit_icon} alt="" className="h-4 w-4" />
                             Edit
                         </Link>
                         <button
@@ -86,7 +83,6 @@ const CarCard = ({ car, ownerMode = false, onDelete }) => {
                             onClick={() => onDelete?.(car._id)}
                             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-red-100 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
                         >
-                            <img src={assets.delete_icon} alt="" className="h-4 w-4" />
                             Delete
                         </button>
                     </div>

@@ -28,105 +28,112 @@ const Navbar = () => {
             .catch(() => setUnreadNotifications(0))
     }, [user])
 
-    const closeMenu = () => setOpen(false)
+    useEffect(() => {
+        setOpen(false)
+    }, [location.pathname])
+
     const isAdmin = user?.role === 'admin'
     const isOwner = user?.role === 'owner'
     const isGuest = !loading && !user
+    const isRenter = user && !isAdmin && !isOwner
 
     const publicLinks = [
         { name: 'Home', path: '/' },
-        { name: 'About Us', path: '/#about' },
-        { name: 'Contact Us', path: '/#contact' },
+        { name: 'About Us', path: '/about' },
+        { name: 'Contact Us', path: '/contact' },
     ]
 
     const userLinks = [
+        { name: 'Home', path: '/' },
         { name: 'Browse Cars', path: '/cars' },
         { name: 'My Bookings', path: '/my-bookings' },
     ]
 
     const ownerLinks = [
+        { name: 'Home', path: '/' },
         { name: 'Browse Cars', path: '/cars' },
         { name: 'Dashboard', path: '/owner' },
         { name: 'My Cars', path: '/owner/manage-cars' },
         { name: 'Bookings', path: '/owner/manage-bookings' },
-        { name: 'My Rentals', path: '/my-bookings' },
     ]
 
-    const adminLinks = [{ name: 'Admin', path: '/admin' }]
+    const adminLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'Dashboard', path: '/admin' },
+        { name: 'Listings', path: '/admin/cars' },
+        { name: 'Bookings', path: '/admin/bookings' },
+    ]
 
-    const centerLinks = isAdmin ? adminLinks : isOwner ? ownerLinks : user ? userLinks : publicLinks
+    const centerLinks = isAdmin ? adminLinks : isOwner ? ownerLinks : isRenter ? userLinks : publicLinks
 
     const isActive = path => {
-        if (path.includes('#')) return location.pathname === '/' && location.hash === path.replace('/', '')
-        return location.pathname === path
+        if (path === '/') return location.pathname === '/'
+        return location.pathname.startsWith(path)
     }
 
     const handleLogout = () => {
-        closeMenu()
+        setOpen(false)
         logout()
+        navigate('/')
+    }
+
+    const handleProfileClick = () => {
+        setOpen(false)
+        navigate('/profile')
     }
 
     return (
         <header className={`relative z-20 border-b border-slate-200 ${location.pathname === '/' ? 'bg-light' : 'bg-white'}`}>
-            <div className="mx-auto grid min-h-[72px] max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 sm:px-8 lg:px-10">
-                {/* Left zone */}
-                <div className="flex items-center gap-3">
+            <div className="mx-auto grid min-h-[72px] max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 sm:px-8 lg:px-10">
+                {/* Left — Logo */}
+                <Link to="/" onClick={() => setOpen(false)} className="shrink-0">
+                    <img src={assets.logo} alt="CarRental home" className="h-8" />
+                </Link>
+
+                {/* Center — Nav links */}
+                <nav className="hidden items-center justify-center gap-6 lg:flex">
+                    {centerLinks.map(link => (
+                        <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={() => setOpen(false)}>
+                            {link.name}
+                        </NavLink>
+                    ))}
+                </nav>
+
+                {/* Right — Account controls */}
+                <div className="flex items-center justify-end gap-3">
                     {isGuest && (
                         <button
                             type="button"
-                            onClick={() => { closeMenu(); navigate('/login') }}
-                            className="hidden rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dull sm:inline-flex"
+                            onClick={() => { setOpen(false); navigate('/login') }}
+                            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dull"
                         >
                             Login
                         </button>
                     )}
-                    {isOwner && user && (
-                        <Link to="/profile" onClick={closeMenu} className="hidden sm:block" title="View profile">
-                            <img
-                                src={user.image || assets.user_profile}
-                                alt={`${user.name}'s profile`}
-                                className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm ring-2 ring-slate-100 transition hover:ring-primary/30"
-                            />
-                        </Link>
-                    )}
-                    {!isOwner && user && !isAdmin && (
-                        <Link to="/profile" onClick={closeMenu} className="hidden items-center gap-2 sm:flex" title="View profile">
-                            <img
-                                src={user.image || assets.user_profile}
-                                alt=""
-                                className="h-9 w-9 rounded-full object-cover ring-2 ring-slate-100"
-                            />
-                        </Link>
-                    )}
-                </div>
 
-                {/* Center zone — logo + nav links */}
-                <div className="flex items-center justify-center gap-6 lg:gap-10">
-                    <Link to="/" onClick={closeMenu} className="shrink-0">
-                        <img src={assets.logo} alt="CarRental home" className="h-8" />
-                    </Link>
-                    <nav className="hidden items-center gap-6 lg:flex">
-                        {centerLinks.map(link => (
-                            <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={closeMenu}>
-                                {link.name}
-                            </NavLink>
-                        ))}
-                    </nav>
-                </div>
-
-                {/* Right zone */}
-                <div className="flex items-center justify-end gap-3">
                     {!loading && user && (
                         <>
                             {unreadNotifications > 0 && (
                                 <Link
                                     to="/notifications"
-                                    onClick={closeMenu}
-                                    className="hidden text-sm font-medium text-primary sm:inline-flex"
+                                    onClick={() => setOpen(false)}
+                                    className="hidden text-xs font-medium text-primary sm:inline-flex"
                                 >
                                     Notifications ({unreadNotifications})
                                 </Link>
                             )}
+                            <button
+                                type="button"
+                                onClick={handleProfileClick}
+                                className="hidden sm:block"
+                                title="View profile"
+                            >
+                                <img
+                                    src={user.image || assets.user_profile}
+                                    alt={`${user.name}'s profile`}
+                                    className="h-9 w-9 rounded-full border-2 border-white object-cover shadow-sm ring-2 ring-slate-100 transition hover:ring-primary/30"
+                                />
+                            </button>
                             <button
                                 type="button"
                                 onClick={handleLogout}
@@ -136,6 +143,7 @@ const Navbar = () => {
                             </button>
                         </>
                     )}
+
                     <button
                         type="button"
                         aria-label={open ? 'Close navigation' : 'Open navigation'}
@@ -147,12 +155,11 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Mobile menu */}
             {open && (
                 <div className="border-t border-slate-200 bg-white px-5 py-5 shadow-lg lg:hidden">
                     <nav className="flex flex-col gap-4">
                         {centerLinks.map(link => (
-                            <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={closeMenu}>
+                            <NavLink key={link.path} to={link.path} active={isActive(link.path)} onClick={() => setOpen(false)}>
                                 {link.name}
                             </NavLink>
                         ))}
@@ -161,21 +168,23 @@ const Navbar = () => {
                         {isGuest ? (
                             <button
                                 type="button"
-                                onClick={() => { closeMenu(); navigate('/login') }}
+                                onClick={() => { setOpen(false); navigate('/login') }}
                                 className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white"
                             >
                                 Login
                             </button>
                         ) : (
                             <>
-                                {isOwner && (
-                                    <Link to="/profile" onClick={closeMenu} className="flex items-center gap-3 text-sm text-slate-700">
-                                        <img src={user.image || assets.user_profile} alt="" className="h-10 w-10 rounded-full object-cover" />
-                                        {user.name}
-                                    </Link>
-                                )}
+                                <button
+                                    type="button"
+                                    onClick={handleProfileClick}
+                                    className="flex items-center gap-3 text-sm text-slate-700"
+                                >
+                                    <img src={user.image || assets.user_profile} alt="" className="h-10 w-10 rounded-full object-cover" />
+                                    {user.name}
+                                </button>
                                 {unreadNotifications > 0 && (
-                                    <Link to="/notifications" onClick={closeMenu} className="text-sm text-primary">
+                                    <Link to="/notifications" onClick={() => setOpen(false)} className="text-sm text-primary">
                                         Notifications ({unreadNotifications})
                                     </Link>
                                 )}

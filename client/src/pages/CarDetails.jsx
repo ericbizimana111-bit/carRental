@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import api from '../services/api'
 import { useAuth } from '../context/useAuth'
+import StarRating from '../components/StarRating'
 
 const CarDetails = () => {
   const { id } = useParams()
@@ -18,9 +19,11 @@ const CarDetails = () => {
   const [bookingLoading, setBookingLoading] = useState(false)
   const [reviews, setReviews] = useState([])
   const [rating, setRating] = useState(0)
+  const [ratingCount, setRatingCount] = useState(0)
   const [favorite, setFavorite] = useState(false)
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' })
   const [reviewMessage, setReviewMessage] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
   const { user } = useAuth()
 
   useEffect(() => {
@@ -33,7 +36,13 @@ const CarDetails = () => {
         const reviewResponse = await api.get(`/reviews/${id}`)
         setReviews(reviewResponse.data.data || [])
         setRating(reviewResponse.data.rating || 0)
-        if (user) setFavorite((await api.get(`/favorites/${id}/status`)).data.favorite)
+        setRatingCount(reviewResponse.data.count || 0)
+        if (user) {
+          try {
+            const favResponse = await api.get(`/favorites/${id}/status`)
+            setFavorite(favResponse.data.favorite)
+          } catch { /* ignore */ }
+        }
       } catch (requestError) {
         setError(requestError.response?.data?.message || 'Unable to load this car')
       } finally {
@@ -85,17 +94,28 @@ const CarDetails = () => {
 
   const toggleFavorite = async () => {
     if (!user) return navigate('/login')
-    try { setFavorite((await api.post(`/favorites/${car._id}/toggle`)).data.favorite) } catch (requestError) { setReviewMessage(requestError.response?.data?.message || 'Unable to update favorite') }
+    try {
+      const response = await api.post(`/favorites/${car._id}/toggle`)
+      setFavorite(response.data.favorite)
+    } catch (requestError) {
+      setReviewMessage(requestError.response?.data?.message || 'Unable to update favorite')
+    }
   }
 
   const submitReview = async event => {
     event.preventDefault()
+    setReviewSubmitting(true)
+    setReviewMessage('')
     try {
-      const response = await api.post(`/reviews/${car._id}`, reviewForm)
+      const response = await api.post(`/reviews/${car._id}`, { rating: Number(reviewForm.rating), comment: reviewForm.comment })
       setReviews([response.data.data, ...reviews])
       setReviewMessage('Review submitted successfully')
       setReviewForm({ rating: 5, comment: '' })
-    } catch (requestError) { setReviewMessage(requestError.response?.data?.message || 'Unable to submit review') }
+    } catch (requestError) {
+      setReviewMessage(requestError.response?.data?.message || 'Unable to submit review')
+    } finally {
+      setReviewSubmitting(false)
+    }
   }
 
   return (
@@ -104,7 +124,9 @@ const CarDetails = () => {
         onClick={() => navigate('/cars')}
         className="mb-6 flex items-center gap-2 text-sm text-slate-500 transition hover:text-primary"
       >
-        <img src={assets.arrow_icon} className="h-4 w-4 rotate-180" alt="" />
+        <svg className="h-4 w-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
         Back to all cars
       </button>
 
@@ -122,10 +144,7 @@ const CarDetails = () => {
             {car.brand} {car.model}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-4">
-            <span className="flex items-center gap-1.5 text-sm font-medium text-amber-600">
-              <img src={assets.star_icon} alt="" className="h-4 w-4" />
-              {rating ? `${rating}/5` : 'No ratings yet'}
-            </span>
+            <StarRating rating={rating} count={ratingCount} />
             <span className="text-sm text-slate-500">Listed by {car.owner?.name || 'Car owner'}</span>
             <button onClick={toggleFavorite} className="text-sm font-medium text-primary hover:underline">
               {favorite ? 'Remove favorite' : 'Save favorite'}
@@ -157,40 +176,57 @@ const CarDetails = () => {
             {car.description}
           </p>
 
-          <h2 className="mt-8 text-lg font-semibold">Features</h2>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600">
-            {['Leather Seats', 'Panoramic Sunroof', 'Wireless Charging', '360 Camera'].map(feature => (
-              <p key={feature} className="flex items-center gap-2">
-                <img src={assets.check_icon} className="h-4 w-4" alt="" />
-                {feature}
-              </p>
-            ))}
-          </div>
-
           <h2 className="mt-8 text-lg font-semibold">Reviews ({reviews.length})</h2>
           <div className="mt-4 space-y-4">
+            {reviews.length === 0 && (
+              <p className="text-sm text-slate-400">No reviews yet. Be the first to review this car.</p>
+            )}
             {reviews.map(review => (
               <div key={review._id} className="border-b border-slate-100 pb-4">
-                <p className="text-sm font-medium text-slate-800">
-                  {review.user?.name || 'Customer'}
-                  <span className="ml-2 text-amber-600">{review.rating}/5</span>
-                </p>
-                <p className="mt-1 text-sm text-slate-500">{review.comment}</p>
+                <div className="flex items-center gap-3">
+                  <img src={review.user?.image || assets.user_profile} alt="" className="h-8 w-8 rounded-full object-cover" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {review.user?.name || 'Customer'}
+                    </p>
+                    <StarRating rating={review.rating} showValue={false} />
+                  </div>
+                  <span className="text-xs text-slate-400 ml-auto">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-slate-600 ml-11">{review.comment}</p>
               </div>
             ))}
           </div>
 
           {user && (
             <form onSubmit={submitReview} className="mt-6 space-y-3">
-              <select value={reviewForm.rating} onChange={e => setReviewForm({ ...reviewForm, rating: e.target.value })} className="input-field">
-                <option value="5">5 stars</option>
-                <option value="4">4 stars</option>
-                <option value="3">3 stars</option>
-                <option value="2">2 stars</option>
-                <option value="1">1 star</option>
-              </select>
+              <label className="block text-sm font-medium text-slate-700">Your rating</label>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(value => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setReviewForm({ ...reviewForm, rating: value })}
+                    className="p-0.5"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+                      <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                        fill={value <= Number(reviewForm.rating) ? '#f59e0b' : 'none'}
+                        stroke="#f59e0b"
+                        strokeWidth="1"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                ))}
+              </div>
               <textarea required value={reviewForm.comment} onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} placeholder="Share your experience with this vehicle" className="input-field min-h-[80px]" />
-              <button className="btn-primary !rounded-lg">Submit review</button>
+              <button disabled={reviewSubmitting} className="btn-primary !rounded-lg">
+                {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+              </button>
             </form>
           )}
           {reviewMessage && <p className="mt-3 text-sm text-slate-500">{reviewMessage}</p>}
@@ -243,11 +279,11 @@ const CarDetails = () => {
           </div>
 
           <div className="mt-5 space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-600">
-            <div className="flex justify-between"><span>Rental days</span><span className="font-medium">{rentalDays || '—'}</span></div>
+            <div className="flex justify-between"><span>Rental days</span><span className="font-medium">{rentalDays || '\u2014'}</span></div>
             <div className="flex justify-between"><span>Price per day</span><span className="font-medium">{import.meta.env.VITE_CURRENCY}{car.pricePerDay}</span></div>
             <div className="flex justify-between text-base font-semibold text-slate-900">
               <span>Estimated total</span>
-              <span>{rentalDays ? `${import.meta.env.VITE_CURRENCY}${estimatedTotal}` : '—'}</span>
+              <span>{rentalDays ? `${import.meta.env.VITE_CURRENCY}${estimatedTotal}` : '\u2014'}</span>
             </div>
           </div>
 
