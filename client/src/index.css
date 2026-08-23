@@ -81,3 +81,17 @@ h3 {
 .input-field {
     @apply w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/15;
 }
+
+@keyframes drive {
+    0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); filter: blur(0px); }
+    15% { transform: translateX(8px) translateY(-2px) rotate(-0.3deg); filter: blur(0.5px); }
+    30% { transform: translateX(16px) translateY(0px) rotate(0deg); filter: blur(0px); }
+    50% { transform: translateX(20px) translateY(1px) rotate(0.3deg); filter: blur(0.5px); }
+    65% { transform: translateX(12px) translateY(0px) rotate(0deg); filter: blur(0px); }
+    85% { transform: translateX(4px) translateY(-1px) rotate(-0.2deg); filter: blur(0.5px); }
+}
+
+@keyframes spin-wheel {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
