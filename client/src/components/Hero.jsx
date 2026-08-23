@@ -30,44 +30,8 @@ const Hero = () => {
                         List Your Car
                     </Link>
                 </div>
-            </ScrollReveal>
-
-            {/* Search form below buttons */}
-            <ScrollReveal delay={450}>
-                <form
-                    onSubmit={event => { event.preventDefault(); navigate('/cars') }}
-                    className="flex w-full max-w-4xl flex-col items-stretch justify-between gap-4 rounded-2xl bg-white p-6 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] md:flex-row md:items-center md:rounded-full md:px-8"
-                >
-                    <div className="flex flex-col items-start gap-1.5 md:min-w-[140px]">
-                        <label htmlFor="location" className="text-xs font-medium text-slate-500">Pickup Location</label>
-                        <select
-                            className="w-full bg-transparent text-sm outline-none"
-                            name="location"
-                            id="location"
-                        >
-                            <option value="">Select city</option>
-                            <option value="New York">New York</option>
-                            <option value="Los Angeles">Los Angeles</option>
-                            <option value="Houston">Houston</option>
-                            <option value="Chicago">Chicago</option>
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col items-start gap-1.5">
-                        <label htmlFor="pickup-date" className="text-xs font-medium text-slate-500">Pickup Date</label>
-                        <input type="date" id="pickup-date" min={new Date().toLocaleDateString('en-CA')} className="text-sm text-slate-600 outline-none" />
-                    </div>
-
-                    <div className="flex flex-col items-start gap-1.5">
-                        <label htmlFor="return-date" className="text-xs font-medium text-slate-500">Return Date</label>
-                        <input type="date" id="return-date" min={new Date().toLocaleDateString('en-CA')} className="text-sm text-slate-600 outline-none" />
-                    </div>
-
-                    <button type="submit" className="btn-primary mt-2 gap-2 md:mt-0">
-                        Search
-                    </button>
-                </form>
-            </ScrollReveal>
+            </ScrollReveal>   
+             
         </div>
     )
 }
