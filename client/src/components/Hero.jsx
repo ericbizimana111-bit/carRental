@@ -1,34 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { assets } from '../assets/assets'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ScrollReveal from './ScrollReveal'
 
 const stats = [
-    { label: 'Cities', value: '4+', icon: '🏙️' },
-    { label: 'Cars Available', value: '50+', icon: '🚗' },
-    { label: 'Happy Renters', value: '2K+', icon: '⭐' },
+    { label: 'Cities', value: '4+' },
+    { label: 'Cars Available', value: '50+' },
+    { label: 'Happy Renters', value: '2K+' },
+]
+
+const carImages = [
+    { src: assets.car_image1, name: 'Mercedes-Benz C-Class' },
+    { src: assets.car_image2, name: 'Audi Q7' },
+    { src: assets.car_image3, name: 'BMW X5' },
+    { src: assets.car_image4, name: 'Porsche Cayenne' },
 ]
 
 const Hero = () => {
-    const navigate = useNavigate()
+    const [current, setCurrent] = useState(0)
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrent(prev => (prev + 1) % carImages.length)
+        }, 3000)
+        return () => clearInterval(timer)
+    }, [])
 
     return (
-        <div className='relative overflow-hidden bg-light'>
-            {/* Decorative gradient blobs */}
-            <div className='pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl' />
-            <div className='pointer-events-none absolute -bottom-20 -left-20 h-[300px] w-[300px] rounded-full bg-blue-200/30 blur-3xl' />
+        <div className='relative overflow-hidden bg-light border-b border-slate-100'>
 
             <div className='relative mx-auto flex min-h-[calc(100vh-72px)] max-w-7xl flex-col items-center gap-8 px-6 py-14 md:flex-row md:items-start md:gap-6 lg:px-12 xl:px-16'>
 
                 {/* Left: Copy */}
                 <div className='flex flex-1 flex-col items-center text-center md:items-start md:text-left'>
                     <ScrollReveal delay={100}>
-                        <h1 className='mt-5 text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-[3.25rem]'>
+                        <span className='text-xl font-bold text-primary'>
+                            Car Rental, Simplified
+                        </span>
+                        <h1 className='mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 md:text-5xl lg:text-[3.25rem]'>
                             Find Your Perfect
                             <br />
-                            <span className='bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent'>
-                                Drive Today
-                            </span>
+                            Drive Today
                         </h1>
                     </ScrollReveal>
 
@@ -40,10 +52,10 @@ const Hero = () => {
 
                     {/* CTA Buttons */}
                     <ScrollReveal delay={300}>
-                        <div className='mt-8 flex flex-wrap items-center gap-4'>
+                        <div className='mt-8 flex flex-wrap items-center gap-3'>
                             <Link
                                 to='/cars'
-                                className='inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary-dull hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]'
+                                className='inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dull'
                             >
                                 Browse Cars
                                 <svg className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
@@ -52,7 +64,7 @@ const Hero = () => {
                             </Link>
                             <Link
                                 to='/owner/add-car'
-                                className='inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white px-7 py-3.5 text-sm font-semibold text-primary transition-all hover:bg-blue-50 hover:scale-[1.02] active:scale-[0.98]'
+                                className='inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50'
                             >
                                 List Your Car
                             </Link>
@@ -61,7 +73,7 @@ const Hero = () => {
 
                     {/* Trust stats */}
                     <ScrollReveal delay={400}>
-                        <div className='mt-10 flex items-center gap-8'>
+                        <div className='mt-10 flex items-center gap-8 border-t border-slate-100 pt-6'>
                             {stats.map((stat, i) => (
                                 <div key={i} className='flex flex-col items-center md:items-start'>
                                     <span className='text-xl font-bold text-slate-900'>
@@ -72,31 +84,54 @@ const Hero = () => {
                                     </span>
                                 </div>
                             ))}
-                            <div className='hidden h-8 w-px bg-slate-200 md:block' />
-                            <div className='hidden items-center gap-2 md:flex'>
-                                <div className='flex -space-x-2'>
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className='h-7 w-7 rounded-full border-2 border-white bg-slate-200' />
-                                    ))}
-                                </div>
-                                <span className='text-xs text-slate-500'>Join 2K+ happy renters</span>
-                            </div>
                         </div>
                     </ScrollReveal>
                 </div>
 
-                {/* Right: Car image */}
+                {/* Right: Car rotation showcase */}
                 <ScrollReveal delay={250} className='flex flex-1 items-center justify-center pt-10'>
-                    <div className='animate-[drive_4s_ease-in-out_infinite] relative'>
-                        <img
-                            src={assets.main_car}
-                            alt='Luxury rental car'
-                            className='w-full max-w-lg object-contain drop-shadow-2xl'
-                        />
-                        {/* Front wheel */}
-                        <div className='absolute bottom-[18%] right-[12%] h-[14%] w-[14%] rounded-full border-[3px] border-slate-400/40 border-t-slate-600/50 border-r-slate-600/50 animate-[spin-wheel_1s_linear_infinite]' />
-                        {/* Rear wheel */}
-                        <div className='absolute bottom-[18%] left-[15%] h-[14%] w-[14%] rounded-full border-[3px] border-slate-400/40 border-t-slate-600/50 border-r-slate-600/50 animate-[spin-wheel_1s_linear_infinite]' />
+                    <div className='relative w-full max-w-lg'>
+                        {/* Fixed-size container with background */}
+                        <div className='relative h-[320px] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 sm:h-[360px]'>
+                            {/* Car images stack */}
+                            {carImages.map((car, i) => (
+                                <div
+                                    key={i}
+                                    className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-in-out ${i === current
+                                            ? 'z-10 opacity-100 translate-x-0 scale-100'
+                                            : i < current
+                                                ? 'z-0 opacity-0 -translate-x-8 scale-95'
+                                                : 'z-0 opacity-0 translate-x-8 scale-95'
+                                        }`}
+                                >
+                                    <img
+                                        src={car.src}
+                                        alt={car.name}
+                                        className='h-full w-full rounded-xl object-contain p-6'
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Car name label */}
+                        <div className='absolute -bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full border border-slate-200 bg-white px-5 py-2 shadow-sm'>
+                            <p className='text-sm font-semibold text-slate-900 whitespace-nowrap'>
+                                {carImages[current].name}
+                            </p>
+                        </div>
+
+                        {/* Dot indicators */}
+                        <div className='absolute -bottom-11 left-1/2 z-20 flex -translate-x-1/2 gap-2'>
+                            {carImages.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrent(i)}
+                                    aria-label={`Show ${carImages[i].name}`}
+                                    className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-primary' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
+                                        }`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </ScrollReveal>
             </div>

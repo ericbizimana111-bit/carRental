@@ -47,108 +47,142 @@ const AddCar = () => {
         }
     }
 
+    const inputClass = "w-full rounded-lg border border-slate-200 bg-white p-2.5 mt-1.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+    const labelClass = "text-xs font-medium text-slate-600"
+
     return (
         <div className="p-6 md:p-8 max-w-5xl">
-            <h1 className="text-2xl font-semibold">{id ? 'Edit Car' : 'Add New Car'}</h1>
-            <p className="text-xs text-gray-500 mt-1">
+            <h1 className="text-2xl font-bold text-slate-900">{id ? 'Edit Car' : 'Add New Car'}</h1>
+            <p className="text-sm text-slate-500 mt-1.5">
                 Fill in details to list a new car for booking, including pricing, availability, and car specifications.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-7 max-w-3xl space-y-5">
-                <label className="border border-dashed border-gray-300 rounded-lg h-32 flex flex-col items-center justify-center cursor-pointer">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={e => setImage(e.target.files[0])}
-                    />
+            <form onSubmit={handleSubmit} className="mt-8 max-w-3xl space-y-8">
 
-                    {image ? (
-                        <img
-                            src={URL.createObjectURL(image)}
-                            className="h-28 w-full object-contain"
-                            alt=""
+                {/* Photo upload */}
+                <div>
+                    <label className={labelClass}>Car Photo</label>
+                    <label className="mt-1.5 flex h-36 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 transition hover:border-primary/40 hover:bg-slate-50/80">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={e => setImage(e.target.files[0])}
                         />
-                    ) : currentImage ? <img src={currentImage} className="h-28 w-full object-contain" alt="Current car" /> : (
-                        <>
-                            <img src={assets.upload_icon} className="w-7" alt="" />
-                            <span className="text-[10px] text-gray-500 mt-2">
-                                Upload a picture of your car
-                            </span>
-                        </>
-                    )}
-                </label>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="text-xs">Brand</label>
-                        <input name="brand" value={form.brand} onChange={updateField} required className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="e.g. BMW, Mercedes, Audi..." />
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Model</label>
-                        <input name="model" value={form.model} onChange={updateField} required className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="e.g. X5, E-Class..." />
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Year</label>
-                        <input name="year" value={form.year} onChange={updateField} required type="number" className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="2025" />
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Daily Price ($)</label>
-                        <input name="pricePerDay" value={form.pricePerDay} onChange={updateField} required min="0" type="number" className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="100" />
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Category</label>
-                        <select name="category" value={form.category} onChange={updateField} className="w-full border rounded-md p-2 mt-1 text-xs outline-none">
-                            <option>Sedan</option>
-                            <option>SUV</option>
-                            <option>Luxury</option>
-                            <option>Sports</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Transmission</label>
-                        <select name="transmission" value={form.transmission} onChange={updateField} className="w-full border rounded-md p-2 mt-1 text-xs outline-none">
-                            <option>Automatic</option>
-                            <option>Manual</option>
-                            <option>Semi-Automatic</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Fuel Type</label>
-                        <select name="fuel_type" value={form.fuel_type} onChange={updateField} className="w-full border rounded-md p-2 mt-1 text-xs outline-none">
-                            <option>Gasoline</option>
-                            <option>Diesel</option>
-                            <option>Hybrid</option>
-                            <option>Electric</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="text-xs">Seating Capacity</label>
-                        <input name="seating_capacity" value={form.seating_capacity} onChange={updateField} required min="1" type="number" className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="5" />
-                    </div>
+                        {image ? (
+                            <img
+                                src={URL.createObjectURL(image)}
+                                className="h-32 w-full object-contain p-2"
+                                alt=""
+                            />
+                        ) : currentImage ? <img src={currentImage} className="h-32 w-full object-contain p-2" alt="Current car" /> : (
+                            <>
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white">
+                                    <img src={assets.upload_icon} className="w-4" alt="" />
+                                </div>
+                                <span className="text-xs text-slate-500 mt-3">
+                                    Upload a picture of your car
+                                </span>
+                                <span className="text-[11px] text-slate-400 mt-0.5">
+                                    PNG or JPG, up to 5MB
+                                </span>
+                            </>
+                        )}
+                    </label>
                 </div>
 
+                {/* Vehicle details */}
                 <div>
-                    <label className="text-xs">Location</label>
-                    <input name="location" value={form.location} onChange={updateField} required className="w-full border rounded-md p-2 mt-1 text-xs outline-none" placeholder="e.g. San Francisco, CA" />
+                    <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+                        Vehicle Details
+                    </h2>
+                    <div className="grid md:grid-cols-2 gap-x-4 gap-y-5 mt-5">
+                        <div>
+                            <label className={labelClass}>Brand</label>
+                            <input name="brand" value={form.brand} onChange={updateField} required className={inputClass} placeholder="e.g. BMW, Mercedes, Audi..." />
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Model</label>
+                            <input name="model" value={form.model} onChange={updateField} required className={inputClass} placeholder="e.g. X5, E-Class..." />
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Year</label>
+                            <input name="year" value={form.year} onChange={updateField} required type="number" className={inputClass} placeholder="2025" />
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Daily Price ($)</label>
+                            <input name="pricePerDay" value={form.pricePerDay} onChange={updateField} required min="0" type="number" className={inputClass} placeholder="100" />
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Category</label>
+                            <select name="category" value={form.category} onChange={updateField} className={inputClass}>
+                                <option>Sedan</option>
+                                <option>SUV</option>
+                                <option>Luxury</option>
+                                <option>Sports</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Transmission</label>
+                            <select name="transmission" value={form.transmission} onChange={updateField} className={inputClass}>
+                                <option>Automatic</option>
+                                <option>Manual</option>
+                                <option>Semi-Automatic</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Fuel Type</label>
+                            <select name="fuel_type" value={form.fuel_type} onChange={updateField} className={inputClass}>
+                                <option>Gasoline</option>
+                                <option>Diesel</option>
+                                <option>Hybrid</option>
+                                <option>Electric</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Seating Capacity</label>
+                            <input name="seating_capacity" value={form.seating_capacity} onChange={updateField} required min="1" type="number" className={inputClass} placeholder="5" />
+                        </div>
+                    </div>
                 </div>
 
+                {/* Location & description */}
                 <div>
-                    <label className="text-xs">Description</label>
-                    <textarea name="description" value={form.description} onChange={updateField} required rows="4" className="w-full border rounded-md p-2 mt-1 text-xs outline-none resize-none" placeholder="Describe your car, its condition, and any notable details..." />
+                    <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2.5">
+                        Listing Information
+                    </h2>
+                    <div className="mt-5 space-y-5">
+                        <div>
+                            <label className={labelClass}>Location</label>
+                            <input name="location" value={form.location} onChange={updateField} required className={inputClass} placeholder="e.g. San Francisco, CA" />
+                        </div>
+
+                        <div>
+                            <label className={labelClass}>Description</label>
+                            <textarea name="description" value={form.description} onChange={updateField} required rows="4" className={`${inputClass} resize-none`} placeholder="Describe your car, its condition, and any notable details..." />
+                        </div>
+                    </div>
                 </div>
 
-                {message && <p className="text-xs text-gray-600">{message}</p>}
-                <button disabled={submitting} className="bg-primary disabled:bg-gray-300 text-white px-5 py-2 rounded-md text-xs hover:bg-primary-dull transition">
-                    {submitting ? 'Listing...' : 'List Your Car'}
-                </button>
+                {message && (
+                    <p className={`text-sm rounded-lg px-3 py-2 ${message.toLowerCase().includes('unable') ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                        {message}
+                    </p>
+                )}
+
+                <div className="flex items-center gap-3 pt-1">
+                    <button disabled={submitting} className="bg-primary disabled:bg-slate-300 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-dull transition-colors">
+                        {submitting ? (id ? 'Saving...' : 'Listing...') : (id ? 'Save Changes' : 'List Your Car')}
+                    </button>
+                </div>
             </form>
         </div>
     )

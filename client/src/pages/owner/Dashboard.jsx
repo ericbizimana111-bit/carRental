@@ -37,81 +37,84 @@ const Dashboard = () => {
         }
     }
 
+    const stats = [
+        { label: 'Total Cars', value: data.totalCars, icon: assets.carIconColored },
+        { label: 'Total Bookings', value: data.totalBookings, icon: assets.calendar_icon_colored },
+        { label: 'Pending Bookings', value: data.pendingBookings, icon: assets.cautionIconColored },
+        { label: 'Completed Bookings', value: data.completedBookings, icon: assets.check_icon },
+    ]
+
     return (
         <div className="p-6 md:p-8 max-w-6xl">
-            <h1 className="text-2xl font-semibold">
+            <h1 className="text-2xl font-bold text-slate-900">
                 Owner Dashboard
             </h1>
 
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-sm text-slate-500 mt-1.5">
                 Monitor your vehicles, bookings, and revenue from one place.
             </p>
 
-            {error && <p className="text-xs text-red-500 mt-4">{error}</p>}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
-                <div className="border rounded-lg p-4">
-                    <p className="text-xs text-gray-500">Total Cars</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <p className="text-xl font-semibold">{data.totalCars}</p>
-                        <img src={assets.carIconColored} className="w-6" alt="" />
-                    </div>
-                </div>
+            {error && (
+                <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2 mt-4">
+                    {error}
+                </p>
+            )}
 
-                <div className="border rounded-lg p-4">
-                    <p className="text-xs text-gray-500">Total Bookings</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <p className="text-xl font-semibold">{data.totalBookings}</p>
-                        <img src={assets.calendar_icon_colored} className="w-6" alt="" />
-                    </div>
+            {loading ? (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="rounded-xl border border-slate-200 p-4 h-[84px] animate-pulse bg-slate-50" />
+                    ))}
                 </div>
-
-                <div className="border rounded-lg p-4">
-                    <p className="text-xs text-gray-500">Pending Bookings</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <p className="text-xl font-semibold">{data.pendingBookings}</p>
-                        <img src={assets.cautionIconColored} className="w-6" alt="" />
-                    </div>
+            ) : (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-7">
+                    {stats.map(stat => (
+                        <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50">
+                                    <img src={stat.icon} className="w-4" alt="" />
+                                </div>
+                            </div>
+                            <p className="text-2xl font-bold text-slate-900 mt-3">{stat.value}</p>
+                        </div>
+                    ))}
                 </div>
-
-                <div className="border rounded-lg p-4">
-                    <p className="text-xs text-gray-500">Completed Bookings</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <p className="text-xl font-semibold">{data.completedBookings}</p>
-                        <img src={assets.check_icon} className="w-6" alt="" />
-                    </div>
-                </div>
-            </div>
+            )}
 
             <div className="grid lg:grid-cols-[1.5fr_1fr] gap-5 mt-5">
-                <div className="border rounded-lg p-5">
-                    <h2 className="font-medium text-sm">Recent Bookings</h2>
-                    <p className="text-[10px] text-gray-500 mt-1">Latest booking requests</p>
+                <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <h2 className="font-semibold text-sm text-slate-900">Recent Bookings</h2>
+                    <p className="text-xs text-slate-400 mt-1">Latest booking requests</p>
 
-                    <div className="mt-5">
+                    <div className="mt-4">
+                        {data.recentBookings.length === 0 && !loading && (
+                            <p className="text-xs text-slate-400 py-6 text-center">No bookings yet</p>
+                        )}
                         {data.recentBookings.map(booking => (
-                            <div key={booking._id} className="flex items-center gap-3 py-3 border-b last:border-0">
-                                <div className="bg-blue-50 p-2 rounded">
-                                    <img src={assets.carIconColored} className="w-3" alt="" />
+                            <div key={booking._id} className="flex items-center gap-3 py-3.5 border-b border-slate-100 last:border-0">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                                    <img src={assets.carIconColored} className="w-3.5" alt="" />
                                 </div>
 
-                                <div className="flex-1">
-                                    <p className="text-xs">{booking.car?.brand} {booking.car?.model}</p>
-                                    <p className="text-[9px] text-gray-400">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm text-slate-900 truncate">{booking.car?.brand} {booking.car?.model}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">
                                         {new Date(booking.pickupDate).toLocaleDateString()}
                                     </p>
                                 </div>
 
-                                <p className="text-xs">{currency}{booking.totalPrice}</p>
+                                <p className="text-sm font-medium text-slate-900">{currency}{booking.totalPrice}</p>
                                 <StatusBadge status={booking.status} />
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="border rounded-lg p-5 h-fit">
-                    <h2 className="font-medium text-sm">Monthly Revenue</h2>
-                    <p className="text-[10px] text-gray-500 mt-1">Revenue for current month</p>
-                    <p className="text-2xl font-semibold text-blue-600 mt-5">
+                <div className="rounded-xl border border-slate-200 bg-white p-5 h-fit">
+                    <h2 className="font-semibold text-sm text-slate-900">Monthly Revenue</h2>
+                    <p className="text-xs text-slate-400 mt-1">Revenue for current month</p>
+                    <p className="text-3xl font-bold text-primary mt-5">
                         {currency}{data.monthlyRevenue}
                     </p>
                 </div>
