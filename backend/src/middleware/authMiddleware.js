@@ -37,4 +37,17 @@ const protect = async (req, res, next) => {
     }
 }
 
+export const optionalProtect = async (req, res, next) => {
+    try {
+        const token = req.cookies.token
+        if (!token) return next()
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await User.findById(decoded.userId).select('-password')
+        if (user) req.user = user
+    } catch {
+        // Guest access is allowed when the session is missing or invalid.
+    }
+    next()
+}
+
 export default protect

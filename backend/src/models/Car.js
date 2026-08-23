@@ -13,7 +13,10 @@ const carSchema = new mongoose.Schema({
     pricePerDay: { type: Number, required: true, min: 0 },
     location: { type: String, required: true, trim: true, index: true },
     description: { type: String, required: true, trim: true },
-    isAvailable: { type: Boolean, default: true, index: true }
+    documentation: { type: String, default: '', trim: true },
+    isAvailable: { type: Boolean, default: true, index: true },
+    listingStatus: { type: String, enum: ['pending', 'live', 'rejected'], default: 'pending', index: true },
+    rejectionReason: { type: String, default: '', trim: true }
 }, { timestamps: true })
 
 carSchema.index({ category: 1, isAvailable: 1 })
