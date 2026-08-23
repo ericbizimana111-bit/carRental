@@ -22,7 +22,7 @@ export const getCars = async (req, res) => {
         const { search, location, category, transmission, fuel_type, seating_capacity, minPrice, maxPrice, isAvailable, sort = '-createdAt', page = 1, limit = 12 } = req.query
         const filters = { listingStatus: 'live' }
         if (search) {
-            const escaped = search.trim().replace(/[.*+?^${}()|[\]\]/g, '\\$&')
+            const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
             const expression = new RegExp(escaped, 'i')
             filters.$or = [{ brand: expression }, { model: expression }, { location: expression }]
         }
