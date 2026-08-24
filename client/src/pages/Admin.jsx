@@ -369,7 +369,14 @@ const Admin = () => {
                                             </button>
                                         )}
                                         {['pending', 'confirmed'].includes(booking.status) && (
-                                            <button disabled={updatingId === booking._id} onClick={() => updateBookingStatus(booking._id, 'cancelled')} className="rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 disabled:opacity-50">
+                                            <button
+                                                disabled={updatingId === booking._id}
+                                                onClick={() => setConfirmAction({ type: 'cancel', id: booking._id, car: `${booking.car?.brand} ${booking.car?.model}` })}
+                                                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-600 transition-all duration-150 hover:border-red-300 hover:bg-red-100 hover:text-red-700 hover:shadow-sm active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                                                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                                </svg>
                                                 Cancel
                                             </button>
                                         )}
@@ -390,12 +397,17 @@ const Admin = () => {
             {confirmAction && (
                 <ConfirmModal
                     open={true}
-                    title={confirmAction.type === 'approve' ? `Approve ${confirmAction.car}?` : `Reject ${confirmAction.car}?`}
-                    message={confirmAction.type === 'approve'
+                    title={confirmAction.type === 'cancel' ? `Cancel ${confirmAction.car}?`
+                        : confirmAction.type === 'approve' ? `Approve ${confirmAction.car}?` : `Reject ${confirmAction.car}?`}
+                    message={confirmAction.type === 'cancel'
+                        ? 'This action cannot be undone. The booking will be marked as cancelled.'
+                        : confirmAction.type === 'approve'
                         ? 'This listing will become visible to renters on the platform.'
                         : 'This listing will not go live. The owner will be notified.'}
-                    confirmLabel={confirmAction.type === 'approve' ? 'Approve listing' : 'Reject listing'}
-                    onConfirm={() => confirmAction.type === 'approve' ? approveCar(confirmAction.id) : rejectCar(confirmAction.id)}
+                    confirmLabel={confirmAction.type === 'cancel' ? 'Yes, cancel booking'
+                        : confirmAction.type === 'approve' ? 'Approve listing' : 'Reject listing'}
+                    onConfirm={() => confirmAction.type === 'cancel' ? updateBookingStatus(confirmAction.id, 'cancelled')
+                        : confirmAction.type === 'approve' ? approveCar(confirmAction.id) : rejectCar(confirmAction.id)}
                     onCancel={() => setConfirmAction(null)}
                     busy={Boolean(updatingId)}
                 />
